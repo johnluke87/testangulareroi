@@ -1,0 +1,15 @@
+<h1>I MIEI EROI</h1>
+@if (caricamento) {
+  <p class="loader">Caricamento eroi...</p>
+} @else if (errore) {
+  <p class="errore">{{ errore }}</p>
+} @else {
+<ul>
+    <li *ngFor="let eroe of eroi" [class.selezionato]="eroeSelezionato === eroe"
+        (click)="onSelect(eroe)">
+        {{eroe.nome | uppercase}} - {{eroe.superpotere | lowercase}} - {{eroe.eroe}} -
+        {{eroe.id}}
+    </li>
+</ul>
+}
+<app-dettagli-eroe [eroeSelezionato]="eroeSelezionato"></app-dettagli-eroe>

@@ -6,10 +6,9 @@
 } @else {
 <ul>
     <li *ngFor="let eroe of eroi" [class.selezionato]="eroeSelezionato === eroe"
-        (click)="onSelect(eroe)">
+        [routerLink]="'/dettaglio-' + eroe.id" (click)="onSelect(eroe)">
         {{eroe.nome | uppercase}} - {{eroe.superpotere | lowercase}} - {{eroe.eroe}} -
         {{eroe.id}}
     </li>
 </ul>
 }
-<app-dettagli-eroe [eroeSelezionato]="eroeSelezionato"></app-dettagli-eroe>

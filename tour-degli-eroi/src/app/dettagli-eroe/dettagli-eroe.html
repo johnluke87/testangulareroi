@@ -1,4 +1,8 @@
-@if (eroeSelezionato;) {
+@if (caricamento) {
+  <p>Caricamento eroe...</p>
+} @else if (errore) {
+  <p>{{ errore }}</p>
+} @else if (eroeSelezionato) {
   <h1>EROE SELEZIONATO</h1>
   <p>{{ eroeSelezionato.nome | uppercase }}</p>
   <p>{{ eroeSelezionato.superpotere | lowercase }}</p>

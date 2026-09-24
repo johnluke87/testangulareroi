@@ -1,0 +1,7 @@
+<h2>Notifiche</h2>
+<ul>
+    <li *ngFor="let notifica of notificheservizio.notifiche()"><span>{{ notifica }}</span> <button
+            (click)="deleteNotifiche(notifica)">Elimina</button></li>
+</ul>
+
+<button (click)="deleteAllNotifiche()">Elimina tutte le notifiche</button>

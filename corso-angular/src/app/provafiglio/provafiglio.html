@@ -1,0 +1,10 @@
+<ul>
+  @for (persona of data; track $index) {
+    <li>
+      {{ persona.nome }} {{ persona.cognome }}
+      <button type="button" (click)="scegli(persona.nome)">scegli</button>
+    </li>
+  }
+</ul>
+
+<button type="button" (click)="mandaDatiEvento.emit('pippooo')">manda dati al padre</button>

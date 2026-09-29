@@ -1,0 +1,216 @@
+<h2>Iscrizione al corso (form reactive)</h2>
+
+<!--
+  [formGroup]="form"   collega il tag <form> al FormGroup creato nella classe
+  (ngSubmit)           parte con Invio o con il bottone type="submit"
+  Il template non crea controlli: li collega soltanto, per nome.
+-->
+<form [formGroup]="form" (ngSubmit)="invia()" novalidate>
+
+  <!-- formControlName: il nome della chiave nel FormGroup. Errori letti dal getter nome -->
+  <label>
+    Nome
+    <input formControlName="nome">
+  </label>
+  @if (mostraErrore(nome)) {
+    <div class="errore">
+      @if (nome.hasError('required')) { Il nome è obbligatorio. }
+      @if (nome.hasError('minlength')) {
+        Almeno {{ nome.getError('minlength').requiredLength }} caratteri
+        (ora {{ nome.getError('minlength').actualLength }}).
+      }
+      @if (nome.hasError('valoreVietato')) { "{{ nome.getError('valoreVietato').vietato }}" non è permesso. }
+    </div>
+  }
+
+  <!-- updateOn: 'blur' e il validatore asincrono sono scritti nella classe, non qui -->
+  <label>
+    Email
+    <input type="email" formControlName="email">
+  </label>
+  @if (email.pending) {
+    <div class="info">Controllo se l'email è libera...</div>
+  }
+  @if (mostraErrore(email)) {
+    <div class="errore">
+      @if (email.hasError('required')) { L'email è obbligatoria. }
+      @if (email.hasError('email')) { Formato email non valido. }
+      @if (email.hasError('emailUsata')) { Questa email è già registrata. }
+    </div>
+  }
+
+  <!-- Accesso con form.controls.eta, senza getter -->
+  <label>
+    Età
+    <input type="number" formControlName="eta">
+  </label>
+  @if (mostraErrore(form.controls.eta)) {
+    <div class="errore">
+      @if (form.controls.eta.hasError('required')) { L'età è obbligatoria. }
+      @if (form.controls.eta.hasError('min')) { Devi avere almeno 18 anni. }
+      @if (form.controls.eta.hasError('max')) { Massimo 99. }
+    </div>
+  }
+
+  <!-- formGroupName: entra nel gruppo annidato. Dentro, formControlName è relativo al gruppo -->
+  @let credenziali = form.controls.credenziali;
+  <fieldset formGroupName="credenziali">
+    <legend>Credenziali</legend>
+    <label>
+      Password
+      <input type="password" formControlName="password" autocomplete="new-password">
+    </label>
+    @if (mostraErrore(credenziali.controls.password)) {
+      <div class="errore">Almeno 6 caratteri.</div>
+    }
+    <label>
+      Conferma password
+      <input type="password" formControlName="conferma" autocomplete="new-password">
+    </label>
+    @if (mostraErrore(credenziali.controls.conferma)) {
+      <div class="errore">Ripeti la password.</div>
+    }
+    <!-- L'errore del validatore di gruppo sta sul gruppo, non sui campi -->
+    @if (credenziali.hasError('passwordDiverse') && credenziali.controls.conferma.touched) {
+      <div class="errore">Le due password non coincidono.</div>
+    }
+  </fieldset>
+
+  <!-- Accesso con form.get('percorso'): comodo, ma restituisce AbstractControl | null -->
+  <fieldset formGroupName="indirizzo">
+    <legend>Indirizzo</legend>
+    <label>
+      Città
+      <input formControlName="citta">
+    </label>
+    @if (form.get('indirizzo.citta')?.invalid && form.get('indirizzo.citta')?.touched) {
+      <div class="errore">La città è obbligatoria.</div>
+    }
+    <label>
+      CAP
+      <input formControlName="cap">
+    </label>
+    @let cap = form.controls.indirizzo.controls.cap;
+    @if (mostraErrore(cap)) {
+      <div class="errore">
+        @if (cap.hasError('required')) { Il CAP è obbligatorio. }
+        @if (cap.hasError('pattern')) { Il CAP ha 5 cifre. }
+      </div>
+    }
+  </fieldset>
+
+  <label>
+    Livello
+    <select formControlName="livello">
+      <option value="" disabled>Scegli...</option>
+      @for (l of livelli; track l) {
+        <option [value]="l">{{ l }}</option>
+      }
+    </select>
+  </label>
+  @if (mostraErrore(form.controls.livello)) {
+    <div class="errore">Scegli un livello.</div>
+  }
+
+  <div class="gruppo-radio">
+    Modalità:
+    <label><input type="radio" formControlName="modalita" value="presenza"> In presenza</label>
+    <label><input type="radio" formControlName="modalita" value="online"> Online</label>
+  </div>
+
+  <!-- Campo condizionale: il constructor lo abilita o disabilita in base a "fattura" -->
+  <div class="gruppo-radio">
+    Fattura:
+    <label><input type="radio" formControlName="fattura" value="privato"> Privato</label>
+    <label><input type="radio" formControlName="fattura" value="azienda"> Azienda</label>
+  </div>
+  @if (form.controls.azienda.enabled) {
+    <label>
+      Ragione sociale
+      <input formControlName="azienda">
+    </label>
+    @if (mostraErrore(form.controls.azienda)) {
+      <div class="errore">Per la fattura all'azienda serve la ragione sociale.</div>
+    }
+  }
+
+  <!-- FormArray: formArrayName, poi ogni elemento si collega con il suo indice -->
+  <fieldset formArrayName="telefoni">
+    <legend>Telefoni ({{ telefoni.length }})</legend>
+    @for (tel of telefoni.controls; track tel; let i = $index) {
+      <div class="riga">
+        <input [formControlName]="i" placeholder="+39...">
+        @if (telefoni.length > 1) {
+          <button type="button" (click)="rimuoviTelefono(i)">Rimuovi</button>
+        }
+      </div>
+      @if (mostraErrore(tel)) {
+        <div class="errore">Solo cifre, da 6 a 15, con + iniziale facoltativo.</div>
+      }
+    }
+    <button type="button" (click)="aggiungiTelefono()">Aggiungi telefono</button>
+  </fieldset>
+
+  <label>
+    Note
+    <textarea formControlName="note" rows="3"></textarea>
+  </label>
+  <small>{{ form.controls.note.value.length }}/200</small>
+  @if (form.controls.note.hasError('maxlength')) {
+    <div class="errore">Massimo 200 caratteri.</div>
+  }
+
+  <label class="riga">
+    <input type="checkbox" formControlName="privacy">
+    Accetto l'informativa privacy
+  </label>
+  @if (mostraErrore(form.controls.privacy)) {
+    <div class="errore">Devi accettare l'informativa.</div>
+  }
+
+  <div class="azioni">
+    <button type="submit" [disabled]="form.pending">Iscriviti</button>
+    <button type="button" (click)="precompila()">Precompila</button>
+    <button type="button" (click)="svuota()">Svuota</button>
+  </div>
+</form>
+
+@if (inviata(); as dati) {
+  <section class="esito">
+    <h3>Iscrizione inviata</h3>
+    <p>Grazie {{ dati.nome }}, ti scriveremo a {{ dati.email }}.</p>
+    @if (dati.telefoni.length) {
+      <p>Telefoni: {{ dati.telefoni.join(', ') }}</p>
+    }
+  </section>
+}
+
+<section class="stati">
+  <h3>Un FormControl da solo: [formControl]</h3>
+  <input [formControl]="ricerca" placeholder="Cerca un corso">
+  <ul>
+    @for (c of corsiTrovati(); track c) {
+      <li>{{ c }}</li>
+    } @empty {
+      <li>Nessun corso.</li>
+    }
+  </ul>
+
+  <h3>Stati del form</h3>
+  <table>
+    <tbody>
+      <tr><td>status (signal)</td><td>{{ stato() }}</td></tr>
+      <tr><td>valid / invalid</td><td>{{ form.valid }} / {{ form.invalid }}</td></tr>
+      <tr><td>pending</td><td>{{ form.pending }}</td></tr>
+      <tr><td>pristine / dirty</td><td>{{ form.pristine }} / {{ form.dirty }}</td></tr>
+      <tr><td>untouched / touched</td><td>{{ form.untouched }} / {{ form.touched }}</td></tr>
+      <tr><td>credenziali.errors</td><td>{{ form.controls.credenziali.errors | json }}</td></tr>
+      <tr><td>email.errors</td><td>{{ email.errors | json }}</td></tr>
+      <tr><td>azienda</td><td>{{ form.controls.azienda.status }}</td></tr>
+    </tbody>
+  </table>
+  <h4>form.value (senza i campi disabilitati)</h4>
+  <pre>{{ form.value | json }}</pre>
+  <h4>form.getRawValue() (tutti i campi)</h4>
+  <pre>{{ form.getRawValue() | json }}</pre>
+</section>

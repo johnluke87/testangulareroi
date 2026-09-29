@@ -1,0 +1,175 @@
+<h2>Iscrizione al corso (form template-driven)</h2>
+
+<!--
+  #iscrizioneForm="ngForm"  riferimento al form intero (classe NgForm)
+  (ngSubmit)                parte con Invio o con il bottone type="submit", senza ricaricare la pagina
+  novalidate                spegne i messaggi del browser: gli errori li mostra Angular
+-->
+<form #iscrizioneForm="ngForm" (ngSubmit)="invia(iscrizioneForm)" novalidate>
+
+  <!-- Campo di testo: required, minlength, validatore personalizzato -->
+  <label>
+    Nome
+    <input name="nome" [(ngModel)]="modello.nome" #nome="ngModel"
+           required minlength="2" maxlength="30" appValoreVietato="admin">
+  </label>
+  @if (nome.invalid && (nome.touched || iscrizioneForm.submitted)) {
+    <div class="errore">
+      @if (nome.hasError('required')) { Il nome è obbligatorio. }
+      @if (nome.hasError('minlength')) {
+        Almeno {{ nome.errors?.['minlength'].requiredLength }} caratteri
+        (ora {{ nome.errors?.['minlength'].actualLength }}).
+      }
+      @if (nome.hasError('valoreVietato')) { "{{ nome.errors?.['valoreVietato'].vietato }}" non è permesso. }
+    </div>
+  }
+
+  <!-- Email: validatore email + validatore asincrono. updateOn blur: valida quando esci dal campo -->
+  <label>
+    Email
+    <input type="email" name="email" [(ngModel)]="modello.email" #email="ngModel"
+           [ngModelOptions]="{ updateOn: 'blur' }"
+           required email appEmailLibera>
+  </label>
+  @if (email.pending) {
+    <div class="info">Controllo se l'email è libera...</div>
+  }
+  @if (email.invalid && (email.touched || iscrizioneForm.submitted)) {
+    <div class="errore">
+      @if (email.hasError('required')) { L'email è obbligatoria. }
+      @if (email.hasError('email')) { Formato email non valido. }
+      @if (email.hasError('emailUsata')) { Questa email è già registrata. }
+    </div>
+  }
+
+  <!-- Numero: min e max -->
+  <label>
+    Età
+    <input type="number" name="eta" [(ngModel)]="modello.eta" #eta="ngModel" required min="18" max="99">
+  </label>
+  @if (eta.invalid && (eta.touched || iscrizioneForm.submitted)) {
+    <div class="errore">
+      @if (eta.hasError('required')) { L'età è obbligatoria. }
+      @if (eta.hasError('min')) { Devi avere almeno 18 anni. }
+      @if (eta.hasError('max')) { Massimo 99. }
+    </div>
+  }
+
+  <!-- Gruppo: i campi finiscono in value.credenziali. Il validatore sta sul gruppo -->
+  <fieldset ngModelGroup="credenziali" #credenziali="ngModelGroup" appPasswordUguali>
+    <legend>Credenziali</legend>
+    <label>
+      Password
+      <input type="password" name="password" [(ngModel)]="modello.credenziali.password"
+             #password="ngModel" required minlength="6" autocomplete="new-password">
+    </label>
+    @if (password.invalid && (password.touched || iscrizioneForm.submitted)) {
+      <div class="errore">Almeno 6 caratteri.</div>
+    }
+    <label>
+      Conferma password
+      <input type="password" name="conferma" [(ngModel)]="modello.credenziali.conferma"
+             #conferma="ngModel" required autocomplete="new-password">
+    </label>
+    @if (conferma.hasError('required') && (conferma.touched || iscrizioneForm.submitted)) {
+      <div class="errore">Ripeti la password.</div>
+    }
+    @if (credenziali.hasError('passwordDiverse') && (conferma.touched || iscrizioneForm.submitted)) {
+      <div class="errore">Le due password non coincidono.</div>
+    }
+  </fieldset>
+
+  <!-- Secondo gruppo, con pattern -->
+  <fieldset ngModelGroup="indirizzo" #indirizzo="ngModelGroup">
+    <legend>Indirizzo</legend>
+    <label>
+      Città
+      <input name="citta" [(ngModel)]="modello.indirizzo.citta" #citta="ngModel" required>
+    </label>
+    @if (citta.invalid && (citta.touched || iscrizioneForm.submitted)) {
+      <div class="errore">La città è obbligatoria.</div>
+    }
+    <label>
+      CAP
+      <input name="cap" [(ngModel)]="modello.indirizzo.cap" #cap="ngModel" required pattern="\d{5}">
+    </label>
+    @if (cap.invalid && (cap.touched || iscrizioneForm.submitted)) {
+      <div class="errore">
+        @if (cap.hasError('required')) { Il CAP è obbligatorio. }
+        @if (cap.hasError('pattern')) { Il CAP ha 5 cifre. }
+      </div>
+    }
+    <small>Gruppo indirizzo: {{ indirizzo.valid ? 'valido' : 'da completare' }}</small>
+  </fieldset>
+
+  <!-- Select -->
+  <label>
+    Livello
+    <select name="livello" [(ngModel)]="modello.livello" #livello="ngModel" required>
+      <option value="" disabled>Scegli...</option>
+      @for (l of livelli; track l) {
+        <option [value]="l">{{ l }}</option>
+      }
+    </select>
+  </label>
+  @if (livello.invalid && (livello.touched || iscrizioneForm.submitted)) {
+    <div class="errore">Scegli un livello.</div>
+  }
+
+  <!-- Radio: stesso name, valori diversi -->
+  <div class="gruppo-radio">
+    Modalità:
+    <label><input type="radio" name="modalita" value="presenza" [(ngModel)]="modello.modalita"> In presenza</label>
+    <label><input type="radio" name="modalita" value="online" [(ngModel)]="modello.modalita"> Online</label>
+  </div>
+
+  <!-- Textarea con contatore -->
+  <label>
+    Note
+    <textarea name="note" [(ngModel)]="modello.note" maxlength="200" rows="3"></textarea>
+  </label>
+  <small>{{ modello.note.length }}/200</small>
+
+  <!-- Checkbox obbligatoria: required su una checkbox vuol dire "deve essere spuntata" -->
+  <label class="riga">
+    <input type="checkbox" name="privacy" [(ngModel)]="modello.privacy" #privacy="ngModel" required>
+    Accetto l'informativa privacy
+  </label>
+  @if (privacy.invalid && (privacy.touched || iscrizioneForm.submitted)) {
+    <div class="errore">Devi accettare l'informativa.</div>
+  }
+
+  <div class="azioni">
+    <button type="submit" [disabled]="iscrizioneForm.pending">Iscriviti</button>
+    <button type="button" (click)="precompila()">Precompila</button>
+    <button type="button" (click)="svuota()">Svuota</button>
+  </div>
+</form>
+
+@if (inviata(); as dati) {
+  <section class="esito">
+    <h3>Iscrizione inviata</h3>
+    <p>Grazie {{ dati.nome }}, ti scriveremo a {{ dati.email }}.</p>
+  </section>
+}
+
+<!-- Pannello degli stati: letti dal riferimento #iscrizioneForm e da viewChild -->
+<section class="stati">
+  <h3>Stati del form</h3>
+  <table>
+    <tbody>
+      <tr><td>status</td><td>{{ iscrizioneForm.status }}</td></tr>
+      <tr><td>valid / invalid</td><td>{{ iscrizioneForm.valid }} / {{ iscrizioneForm.invalid }}</td></tr>
+      <tr><td>pending</td><td>{{ iscrizioneForm.pending }}</td></tr>
+      <tr><td>pristine / dirty</td><td>{{ iscrizioneForm.pristine }} / {{ iscrizioneForm.dirty }}</td></tr>
+      <tr><td>untouched / touched</td><td>{{ iscrizioneForm.untouched }} / {{ iscrizioneForm.touched }}</td></tr>
+      <tr><td>submitted</td><td>{{ iscrizioneForm.submitted }}</td></tr>
+      <tr><td>campo email (viewChild)</td><td>{{ campoEmail()?.status }}, errori: {{ campoEmail()?.errors | json }}</td></tr>
+      <tr><td>valueChanges ricevuti</td><td>{{ modifiche() }}</td></tr>
+    </tbody>
+  </table>
+  <h4>iscrizioneForm.value</h4>
+  <pre>{{ iscrizioneForm.value | json }}</pre>
+  <h4>modello (la classe)</h4>
+  <pre>{{ modello | json }}</pre>
+</section>

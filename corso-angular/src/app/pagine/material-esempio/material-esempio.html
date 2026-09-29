@@ -1,0 +1,92 @@
+<h2>Angular Material</h2>
+
+<div class="colonne">
+  <mat-card appearance="outlined">
+    <mat-card-header>
+      <mat-card-title>Nuova lezione</mat-card-title>
+      <mat-card-subtitle>mat-form-field, matInput, mat-select</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="aggiungi()" id="form-lezione">
+        <!-- mat-error compare da solo quando il campo è invalid e touched -->
+        <mat-form-field appearance="outline">
+          <mat-label>Titolo</mat-label>
+          <input matInput formControlName="titolo">
+          <mat-icon matSuffix>edit</mat-icon>
+          @if (form.controls.titolo.hasError('required')) {
+            <mat-error>Il titolo è obbligatorio</mat-error>
+          } @else if (form.controls.titolo.hasError('minlength')) {
+            <mat-error>Almeno 3 caratteri</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Livello</mat-label>
+          <mat-select formControlName="livello">
+            @for (l of livelli; track l) {
+              <mat-option [value]="l">{{ l }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Descrizione</mat-label>
+          <textarea matInput formControlName="descrizione" rows="3"></textarea>
+          <mat-hint align="end">{{ form.controls.descrizione.value.length }}/120</mat-hint>
+          @if (form.controls.descrizione.hasError('maxlength')) {
+            <mat-error>Massimo 120 caratteri</mat-error>
+          }
+        </mat-form-field>
+      </form>
+    </mat-card-content>
+    <mat-card-actions align="end">
+      <button matButton type="button" (click)="svuota()">Svuota</button>
+      <button matButton="filled" type="submit" form="form-lezione">
+        <mat-icon>add</mat-icon> Aggiungi
+      </button>
+    </mat-card-actions>
+  </mat-card>
+
+  <mat-card appearance="outlined">
+    <mat-card-header>
+      <mat-card-title>Lezioni ({{ fatte() }}/{{ lezioni().length }} fatte)</mat-card-title>
+      <mat-card-subtitle>mat-table, mat-checkbox, pipe troncato</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <table mat-table [dataSource]="lezioni()">
+        <ng-container matColumnDef="fatta">
+          <th mat-header-cell *matHeaderCellDef>Fatta</th>
+          <td mat-cell *matCellDef="let l">
+            <mat-checkbox [checked]="l.fatta" (change)="segnaFatta(l, $event.checked)" />
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="titolo">
+          <th mat-header-cell *matHeaderCellDef>Titolo</th>
+          <td mat-cell *matCellDef="let l">{{ l.titolo }}</td>
+        </ng-container>
+        <ng-container matColumnDef="livello">
+          <th mat-header-cell *matHeaderCellDef>Livello</th>
+          <td mat-cell *matCellDef="let l">{{ l.livello }}</td>
+        </ng-container>
+        <ng-container matColumnDef="descrizione">
+          <th mat-header-cell *matHeaderCellDef>Descrizione</th>
+          <td mat-cell *matCellDef="let l" [title]="l.descrizione">{{ l.descrizione | troncato:30 }}</td>
+        </ng-container>
+        <ng-container matColumnDef="azioni">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let l">
+            <button matIconButton type="button" (click)="elimina(l)" aria-label="Elimina lezione">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="colonne"></tr>
+        <tr mat-row *matRowDef="let riga; columns: colonne" [class.fatta]="riga.fatta"></tr>
+        <tr class="mat-mdc-row" *matNoDataRow>
+          <td class="mat-mdc-cell" [attr.colspan]="colonne.length">Nessuna lezione.</td>
+        </tr>
+      </table>
+    </mat-card-content>
+  </mat-card>
+</div>

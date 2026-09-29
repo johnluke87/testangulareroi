@@ -1,0 +1,67 @@
+<h2>Cosa sono le pipe</h2>
+<p>
+  Una pipe trasforma un valore solo nel template. Il dato nel componente resta com'è.
+  Si scrive {{ '{' }}{{ '{' }} valore | nomePipe {{ '}' }}{{ '}' }}.
+  Dopo il nome si possono passare parametri, separati da due punti.
+  In un componente standalone la classe della pipe va nell'array imports.
+</p>
+
+<h2>Testo</h2>
+<p>uppercase mette tutto in maiuscolo: {{ 'testo da trasformare' | uppercase }}</p>
+<p>lowercase mette tutto in minuscolo: {{ 'testo da trasformare' | lowercase }}</p>
+<p>titlecase mette la maiuscola all'inizio di ogni parola: {{ 'testo da trasformare' | titlecase }}</p>
+<p>slice:0:5 prende i caratteri dall'indice 0 fino al 5, escluso: {{ 'testo da trasformare' | slice:0:5 }}</p>
+<p>slice:5 prende i caratteri dall'indice 5 fino alla fine: {{ 'testo da trasformare' | slice:5 }}</p>
+
+<h2>Data, numero, percentuale, valuta</h2>
+<p>
+  date (DatePipe) formatta una data. Il parametro può essere uno schema
+  (dd giorno, MM mese, yyyy anno, HH ore, mm minuti)
+  oppure un nome già pronto.
+  schema: {{ oggi | date:'dd/MM/yyyy HH:mm' }}
+</p>
+<p>short: data e ora brevi. {{ oggi | date:'short' }}</p>
+<p>medium: data e ora medie. {{ oggi | date:'medium' }}</p>
+<p>long: data e ora lunghe. {{ oggi | date:'long' }}</p>
+<p>full: data e ora complete. {{ oggi | date:'full' }}</p>
+<p>shortDate: solo la data, breve. {{ oggi | date:'shortDate' }}</p>
+<p>mediumDate: solo la data, media. {{ oggi | date:'mediumDate' }}</p>
+<p>longDate: solo la data, lunga. {{ oggi | date:'longDate' }}</p>
+<p>fullDate: solo la data, completa. {{ oggi | date:'fullDate' }}</p>
+<p>shortTime: solo l'ora, breve. {{ oggi | date:'shortTime' }}</p>
+<p>mediumTime: solo l'ora, con i secondi. {{ oggi | date:'mediumTime' }}</p>
+<p>longTime: ora e fuso. {{ oggi | date:'longTime' }}</p>
+<p>fullTime: ora, secondi e fuso per esteso. {{ oggi | date:'fullTime' }}</p>
+<p>
+  number (DecimalPipe) formatta un numero. '1.2-2' significa almeno 1 cifra intera
+  e da 2 a 2 decimali.
+  {{ importo | number:'1.2-2' }}
+</p>
+<p>
+  percent (PercentPipe) moltiplica il valore per 100 e aggiunge il simbolo %.
+  quota vale 0.25, quindi diventa 25%. '1.0-0' significa niente decimali.
+  {{ quota | percent:'1.0-0' }}
+</p>
+<p>
+  currency (CurrencyPipe) formatta una somma. I parametri sono, in ordine:
+  codice valuta (EUR), come mostrarla (symbol), i decimali (1.2-2) e la lingua (it).
+  {{ importo | currency:'EUR':'symbol':'1.2-2':'it' }}
+</p>
+
+<h2>Frasi in base al valore</h2>
+<p>
+  Queste due pipe non caricano un file di lingua. Nel componente c'è una mappa:
+  a ogni valore corrisponde una frase già scritta. La pipe sceglie quale mostrare.
+  La chiave other è il caso di riserva, quando il valore non è tra gli altri.
+</p>
+<p>
+  i18nSelect (I18nSelectPipe) cerca il valore nella mappa.
+  genere vale 'donna', quindi mostra la frase di quella chiave.
+  {{ genere | i18nSelect:frasiGenere }}
+</p>
+<p>
+  i18nPlural (I18nPluralPipe) sceglie la frase in base a un numero.
+  =0 e =1 sono i casi esatti. other vale per tutti gli altri numeri.
+  Il carattere # nella frase viene sostituito dal numero.
+  quantita vale 1, quindi: {{ quantita | i18nPlural:frasiQuantita }}
+</p>

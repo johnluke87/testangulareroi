@@ -1,0 +1,62 @@
+<section>
+    <div class="example-label">Text</div>
+
+    <div class="example-button-row">
+
+        <form class="example-form">
+            <mat-form-field class="example-full-width">
+                <mat-label>Leave a comment</mat-label>
+                <input matInput placeholder="Ex. It makes me feel..." (input)="onInput($event)">
+            </mat-form-field>
+            <p>Valore: {{ valore() }}</p>
+
+            <div class="example-button-row">
+                <button type="button" (click)="onClick(this)" [disabled]="isDisabled()" matButton="outlined">{{
+                    isDisabled() ?
+                    'disabilitato' : 'abilitato' }}</button>
+            </div>
+
+
+            <h2>esempio two way binding</h2>
+            <mat-form-field class="example-full-width">
+                <mat-label>esempio</mat-label>
+                <input matInput placeholder="Ex. It makes me feel..." [value]="title()" (input)="onTitle($event)">
+            </mat-form-field>
+            <p>Valore: {{ title() }}</p>
+        </form>
+    </div>
+</section>
+
+<p *ngIf="isOnline()">isVisible Modalità 1</p>
+
+<ng-template *ngIf="isOnline(); then bloccoIf else bloccoElse"></ng-template>
+<ng-template #bloccoIf>
+    <p>isVisible Modalità 2</p>
+</ng-template>
+<ng-template #bloccoElse>
+    <p>isNOTVisible Modalità2</p>
+</ng-template>
+
+
+<ul>
+    <li *ngFor="let persona of persone(); index as i; first as isFirst; last as isLast; even as isEven; odd as isOdd;">
+        <span class="cerchio"
+            [ngClass]="{'cerchio-online': persona.isOnline, 'cerchio-offline': !persona.isOnline}"></span> <span
+            [ngStyle]="{'color': persona.isOnline ? 'green' : 'red'}">{{ i }}</span> - {{ persona.nome }} - {{
+        persona.cognome }}
+    </li>
+</ul>
+
+<h2>esempio switch</h2>
+<div [ngSwitch]="valore()">
+    <p *ngSwitchCase="'1'">Valore 1</p>
+    <p *ngSwitchCase="'2'">Valore 2</p>
+    <p *ngSwitchCase="'3'">Valore 3</p>
+    <p *ngSwitchDefault>Valore default</p>
+</div>
+
+
+<h2>FIGLIO</h2>
+<app-provafiglio [data]="persone()"  (scelto)="onScelto($event)" (mandaDatiEvento)="onMandaDatiEvento($event)"></app-provafiglio>
+<p>Scelto dal figlio: {{ scelto() }}</p>    
+<p>Dati ricevuti dal figlio: {{ datiRicevuti() }}</p>

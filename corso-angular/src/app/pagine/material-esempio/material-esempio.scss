@@ -1,0 +1,32 @@
+:host {
+  display: block;
+  padding: 16px;
+}
+
+.colonne {
+  display: grid;
+  grid-template-columns: minmax(280px, 380px) 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  padding-top: 12px;
+}
+
+table {
+  width: 100%;
+}
+
+tr.fatta td {
+  color: var(--mat-sys-outline);
+  text-decoration: line-through;
+}
+
+@media (max-width: 800px) {
+  .colonne {
+    grid-template-columns: 1fr;
+  }
+}

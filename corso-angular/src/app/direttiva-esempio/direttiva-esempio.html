@@ -1,0 +1,16 @@
+<h2>scegli colore evidenziatore</h2>
+<form>
+    <input type="radio" name="colore" value="red" (click)="cambiaColoreEvidenziatore('red')">red
+    <input type="radio" name="colore" value="green" (click)="cambiaColoreEvidenziatore('green')">green
+    <input type="radio" name="colore" value="blue" (click)="cambiaColoreEvidenziatore('blue')">blue
+    <input type="radio" name="colore" value="yellow" (click)="cambiaColoreEvidenziatore('yellow')">yellow
+    <input type="radio" name="colore" value="purple" (click)="cambiaColoreEvidenziatore('purple')">purple
+    <input type="radio" name="colore" value="orange" (click)="cambiaColoreEvidenziatore('orange')">orange
+    <input type="radio" name="colore" value="brown" (click)="cambiaColoreEvidenziatore('brown')">brown
+    <input type="radio" name="colore" value="gray" (click)="cambiaColoreEvidenziatore('gray')">gray
+    <input type="radio" name="colore" value="black" (click)="cambiaColoreEvidenziatore('black')">black
+    <input type="radio" name="colore" value="white" (click)="cambiaColoreEvidenziatore('white')">white
+</form>
+<p [appHighlight]="colore()" defaultColor="red">Testo con cui uso direttiva</p>
+<p [appHighlight]="colore()" defaultColor="green">Testo con cui uso direttiva</p>
+<p [appHighlight]="colore()" defaultColor="pink">Testo con cui uso direttiva</p>

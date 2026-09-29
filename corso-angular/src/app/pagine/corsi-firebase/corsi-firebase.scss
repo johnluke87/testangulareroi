@@ -1,0 +1,178 @@
+:host {
+  display: block;
+  padding: 16px;
+}
+
+.intro {
+  margin-top: 0;
+}
+
+.colonne {
+  display: grid;
+  grid-template-columns: minmax(260px, 340px) 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+section {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 8px 12px 12px;
+
+  h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 4px 0 8px;
+    font-size: 1em;
+  }
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  &.riga {
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+  }
+}
+
+input:not([type='checkbox']) {
+  padding: 6px 8px;
+  border: 1px solid #999;
+  border-radius: 4px;
+  font: inherit;
+}
+
+input.ng-invalid.ng-touched {
+  border-color: #c62828;
+}
+
+.errore {
+  color: #c62828;
+  font-size: 0.9em;
+}
+
+.azioni {
+  display: flex;
+  gap: 6px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th,
+  td {
+    text-align: left;
+    padding: 4px 6px;
+    border-bottom: 1px solid #eee;
+  }
+
+  tr.selezionato {
+    background: #fff8e1;
+  }
+}
+
+.stato {
+  border: none;
+  border-radius: 10px;
+  padding: 2px 8px;
+  cursor: pointer;
+  background: #e0e0e0;
+
+  &.attivo {
+    background: #c8e6c9;
+  }
+}
+
+.registro {
+  margin-top: 16px;
+
+  details {
+    border-top: 1px solid #eee;
+    padding: 4px 0;
+  }
+
+  summary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+  }
+
+  .url {
+    font-family: monospace;
+    font-size: 0.85em;
+    word-break: break-all;
+  }
+
+  .esito {
+    font-family: monospace;
+    color: #2e7d32;
+
+    &.ko {
+      color: #c62828;
+    }
+  }
+
+  .dettaglio {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  h4 {
+    margin: 6px 0 2px;
+    font-size: 0.85em;
+  }
+
+  pre {
+    margin: 0;
+    padding: 6px;
+    background: #f4f4f4;
+    font-size: 0.8em;
+    overflow: auto;
+    max-height: 200px;
+  }
+}
+
+.metodo {
+  font-family: monospace;
+  padding: 1px 6px;
+  border-radius: 4px;
+  color: #fff;
+  background: #607d8b;
+
+  &.GET {
+    background: #1565c0;
+  }
+  &.POST {
+    background: #2e7d32;
+  }
+  &.PUT {
+    background: #ef6c00;
+  }
+  &.PATCH {
+    background: #6a1b9a;
+  }
+  &.DELETE {
+    background: #c62828;
+  }
+}
+
+@media (max-width: 800px) {
+  .colonne,
+  .registro .dettaglio {
+    grid-template-columns: 1fr;
+  }
+}

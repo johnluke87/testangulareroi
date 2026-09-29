@@ -1,0 +1,4 @@
+<a routerLink="/pagina0">Torna alla lista</a>
+<h2>Dettaglio</h2>
+<p *ngIf="persona">{{ persona.nome }} {{ persona.cognome }}, {{ persona.eta }} anni</p>
+<p *ngIf="!persona">Persona non trovata</p>

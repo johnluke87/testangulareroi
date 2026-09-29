@@ -1,0 +1,18 @@
+<menu>
+  <ul>
+    <li><a routerLink="/pagina0">Pagina 0</a></li>
+    <li><a routerLink="/pagina1">Pagina 1</a></li>
+    <li><a routerLink="/pagina2">Pagina 2</a></li>
+    <li><a routerLink="/contatti">Contatti</a></li>
+    <li><a routerLink="/iscrizione">Iscrizione (form)</a></li>
+    <li><a routerLink="/ngmodel">Esempi ngModel</a></li>
+    <li><a routerLink="/iscrizione-reactive">Iscrizione (reactive)</a></li>
+    <li><a routerLink="/corsi-firebase">Corsi (HTTP + Firebase)</a></li>
+    <li><a routerLink="/material">Angular Material</a></li>
+  </ul>
+</menu>
+<button type="button" (click)="auth.isLoggedIn = !auth.isLoggedIn">
+  Autenticato: {{ auth.isLoggedIn }}
+</button>
+<p>Pagina selezionata: {{ router.url }}</p>
+<router-outlet></router-outlet> <!--non serve mettere altro. finisce tt qui dentr in base alla url-->

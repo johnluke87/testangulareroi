@@ -1,0 +1,115 @@
+<h2>Corsi su Firebase (chiamate HTTP)</h2>
+<p class="intro">Database: <code>{{ firebaseUrl }}/corsi.json</code></p>
+
+@if (errore()) {
+  <p class="errore">{{ errore() }}</p>
+}
+
+<div class="colonne">
+  <section>
+    <h3>{{ inModifica() ? 'Modifica corso (PUT)' : 'Nuovo corso (POST)' }}</h3>
+    <form [formGroup]="form" (ngSubmit)="salva()" novalidate>
+      <label>
+        Titolo
+        <input formControlName="titolo">
+      </label>
+      @if (form.controls.titolo.invalid && form.controls.titolo.touched) {
+        <span class="errore">Il titolo è obbligatorio.</span>
+      }
+      <label>
+        Docente
+        <input formControlName="docente">
+      </label>
+      @if (form.controls.docente.invalid && form.controls.docente.touched) {
+        <span class="errore">Il docente è obbligatorio.</span>
+      }
+      <label>
+        Ore
+        <input type="number" formControlName="ore">
+      </label>
+      @if (form.controls.ore.invalid && form.controls.ore.touched) {
+        <span class="errore">Da 1 a 200 ore.</span>
+      }
+      <label class="riga">
+        <input type="checkbox" formControlName="attivo"> Attivo
+      </label>
+      <div class="azioni">
+        <button type="submit" [disabled]="salvataggio()">
+          {{ salvataggio() ? 'Salvataggio...' : inModifica() ? 'Salva modifiche' : 'Aggiungi' }}
+        </button>
+        @if (inModifica()) {
+          <button type="button" (click)="annulla()">Annulla</button>
+        }
+      </div>
+    </form>
+  </section>
+
+  <section>
+    <h3>
+      Elenco (GET)
+      <button type="button" (click)="carica()" [disabled]="caricamento()">Ricarica</button>
+    </h3>
+    @if (caricamento()) {
+      <p>Caricamento...</p>
+    } @else {
+      <table>
+        <thead>
+          <tr><th>Titolo</th><th>Docente</th><th>Ore</th><th>Stato</th><th></th></tr>
+        </thead>
+        <tbody>
+          @for (c of corsiOrdinati(); track c.id) {
+            <tr [class.selezionato]="inModifica() === c.id">
+              <td>{{ c.titolo }}</td>
+              <td>{{ c.docente }}</td>
+              <td>{{ c.ore }}</td>
+              <td>
+                <button type="button" class="stato" [class.attivo]="c.attivo" (click)="cambiaAttivo(c)"
+                        title="PATCH: cambia solo il campo attivo">
+                  {{ c.attivo ? 'attivo' : 'sospeso' }}
+                </button>
+              </td>
+              <td class="azioni">
+                <button type="button" (click)="modifica(c)">Modifica</button>
+                <button type="button" (click)="elimina(c)">Elimina</button>
+              </td>
+            </tr>
+          } @empty {
+            <tr><td colspan="5">Nessun corso. Aggiungine uno con il form.</td></tr>
+          }
+        </tbody>
+      </table>
+      <p>{{ corsi().length }} corsi, {{ oreTotali() }} ore in totale.</p>
+    }
+  </section>
+</div>
+
+<section class="registro">
+  <h3>
+    Registro chiamate HTTP (interceptor)
+    <button type="button" (click)="registro.svuota()">Svuota</button>
+  </h3>
+  @for (v of registro.voci(); track $index) {
+    <details [open]="$first">
+      <summary>
+        <strong class="metodo {{ v.metodo }}">{{ v.metodo }}</strong>
+        <span class="url">{{ v.url }}</span>
+        <span class="esito" [class.ko]="v.stato === 0 || v.stato >= 400">{{ v.stato }}</span>
+        <small>{{ v.ms }} ms</small>
+      </summary>
+      <div class="dettaglio">
+        <div>
+          <h4>Header inviati</h4>
+          <pre>{{ v.headers.length ? v.headers.join('\n') : '(nessuno oltre a quelli del browser)' }}</pre>
+          <h4>Body inviato</h4>
+          <pre>{{ v.body === null ? '(nessuno)' : (v.body | json) }}</pre>
+        </div>
+        <div>
+          <h4>Risposta</h4>
+          <pre>{{ v.risposta | json }}</pre>
+        </div>
+      </div>
+    </details>
+  } @empty {
+    <p>Nessuna chiamata ancora.</p>
+  }
+</section>

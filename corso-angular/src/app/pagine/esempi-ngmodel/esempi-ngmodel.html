@@ -1,0 +1,119 @@
+<h2>Esempi di ngModel</h2>
+<p class="intro">
+  Fuori da un &lt;form&gt; ngModel non ha bisogno di name. Ogni riquadro mostra una variante;
+  sotto al campo c'è il valore letto dalla classe.
+</p>
+
+<div class="griglia">
+  <!-- 1 -->
+  <section>
+    <h3>1. [(ngModel)] su una proprietà</h3>
+    <input [(ngModel)]="nome" placeholder="Il tuo nome">
+    <p>Ciao {{ nome || 'sconosciuto' }}!</p>
+    <button type="button" (click)="nome = 'Luigi'">Imposta "Luigi" dal codice</button>
+    <code>nome = 'Mario';</code>
+  </section>
+
+  <!-- 2 -->
+  <section>
+    <h3>2. [(ngModel)] su un signal</h3>
+    <input [(ngModel)]="citta">
+    <p>{{ citta() }} ha {{ lettereCitta() }} lettere.</p>
+    <code>[(ngModel)]="citta"  (senza parentesi)</code>
+  </section>
+
+  <!-- 3 -->
+  <section>
+    <h3>3. [ngModel] + (ngModelChange)</h3>
+    <input [ngModel]="codice" (ngModelChange)="aggiornaCodice($event)" placeholder="scrivi abc-123">
+    <p>Salvato: <strong>{{ codice }}</strong> (cambi: {{ cambiCodice }})</p>
+    <code>[(ngModel)] è la scorciatoia di questa coppia</code>
+  </section>
+
+  <!-- 4 -->
+  <section>
+    <h3>4. Due campi, un valore</h3>
+    <input type="range" min="0" max="100" [(ngModel)]="volume">
+    <input type="number" min="0" max="100" [(ngModel)]="volume">
+    <p>Volume: {{ volume }} (tipo: {{ volume === +volume ? 'number' : 'string' }})</p>
+  </section>
+
+  <!-- 5 -->
+  <section>
+    <h3>5. Checkbox</h3>
+    <label class="riga"><input type="checkbox" [(ngModel)]="newsletter"> Voglio la newsletter</label>
+    @if (newsletter) { <p>Riceverai la newsletter.</p> }
+    <p>Interessi:</p>
+    @for (voce of interessiDisponibili; track voce) {
+      <label class="riga">
+        <input type="checkbox" [ngModel]="scelto(voce)" (ngModelChange)="cambiaInteresse(voce, $event)">
+        {{ voce }}
+      </label>
+    }
+    <p>Scelti: {{ interessi | json }}</p>
+  </section>
+
+  <!-- 6 -->
+  <section>
+    <h3>6. Select con oggetti</h3>
+    <select [(ngModel)]="corsoScelto" [compareWith]="stessoCorso">
+      <option [ngValue]="null">Nessun corso</option>
+      @for (c of corsi; track c.id) {
+        <option [ngValue]="c">{{ c.titolo }}</option>
+      }
+    </select>
+    @if (corsoScelto; as c) {
+      <p>{{ c.titolo }}: {{ c.ore }} ore</p>
+    }
+    <code>[ngValue] mette l'oggetto; compareWith lo riconosce per id</code>
+  </section>
+
+  <!-- 7 -->
+  <section>
+    <h3>7. Radio</h3>
+    @for (t of ['S', 'M', 'L']; track t) {
+      <label class="riga"><input type="radio" name="taglia" [value]="t" [(ngModel)]="taglia"> {{ t }}</label>
+    }
+    <p>Taglia: {{ taglia }}</p>
+  </section>
+
+  <!-- 8 -->
+  <section>
+    <h3>8. updateOn: 'blur'</h3>
+    <input [(ngModel)]="cognome" [ngModelOptions]="{ updateOn: 'blur' }" placeholder="Scrivi e poi esci">
+    <p>Cognome: {{ cognome || '(si aggiorna quando esci dal campo)' }}</p>
+  </section>
+</div>
+
+<!-- 9 -->
+<section class="largo">
+  <h3>9. Dentro un form: ngModel senza binding, valori da f.value</h3>
+  <form #f="ngForm" (ngSubmit)="aggiungi(f)" class="riga">
+    <input name="testo" ngModel required minlength="3" #testo="ngModel" placeholder="Nuovo promemoria">
+    <select name="priorita" [ngModel]="'bassa'">
+      <option value="bassa">Bassa</option>
+      <option value="alta">Alta</option>
+    </select>
+    <button type="submit" [disabled]="f.invalid">Aggiungi</button>
+  </form>
+  @if (testo.invalid && testo.dirty) {
+    <p class="errore">Almeno 3 caratteri.</p>
+  }
+  <p>f.value: {{ f.value | json }}</p>
+
+  <ul>
+    @for (p of promemoria(); track p.id) {
+      <li [class.fatto]="p.fatto">
+        <label class="riga">
+          <input type="checkbox" [ngModel]="p.fatto" (ngModelChange)="segnaFatto(p.id, $event)">
+          {{ p.testo }}
+        </label>
+        <span class="priorita" [class.alta]="p.priorita === 'alta'">{{ p.priorita }}</span>
+        <button type="button" (click)="elimina(p.id)">Elimina</button>
+      </li>
+    } @empty {
+      <li>Nessun promemoria.</li>
+    }
+  </ul>
+  <p>Da fare: {{ daFare() }} su {{ promemoria().length }}</p>
+</section>

@@ -1,0 +1,126 @@
+:host {
+  display: grid;
+  grid-template-columns: minmax(280px, 480px) minmax(280px, 1fr);
+  gap: 24px;
+  padding: 16px;
+  align-items: start;
+
+  h2 {
+    grid-column: 1 / -1;
+    margin: 0;
+  }
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 6px;
+
+  &.riga {
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+  }
+}
+
+input:not([type='checkbox']):not([type='radio']),
+select,
+textarea {
+  padding: 6px 8px;
+  border: 1px solid #999;
+  border-radius: 4px;
+  font: inherit;
+}
+
+fieldset {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin-top: 8px;
+}
+
+// Classi CSS che Angular mette da solo su ogni campo con ngModel:
+// ng-valid / ng-invalid, ng-pristine / ng-dirty, ng-untouched / ng-touched, ng-pending.
+// Bordo rosso solo dopo che l'utente è passato dal campo.
+input.ng-invalid.ng-touched,
+select.ng-invalid.ng-touched,
+textarea.ng-invalid.ng-touched {
+  border-color: #c62828;
+}
+
+input.ng-valid.ng-dirty,
+select.ng-valid.ng-dirty {
+  border-color: #2e7d32;
+}
+
+input.ng-pending {
+  border-color: #f9a825;
+}
+
+// Anche il form ha le sue classi: dopo il submit si evidenziano tutti i campi non validi.
+form.ng-submitted .ng-invalid:not(form):not(fieldset) {
+  border-color: #c62828;
+}
+
+.errore {
+  color: #c62828;
+  font-size: 0.85em;
+}
+
+.info {
+  color: #8d6e00;
+  font-size: 0.85em;
+}
+
+.gruppo-radio label {
+  display: inline-flex;
+  flex-direction: row;
+  margin-right: 12px;
+}
+
+.azioni {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.esito {
+  grid-column: 1;
+  padding: 8px 12px;
+  border-left: 4px solid #2e7d32;
+  background: #e8f5e9;
+}
+
+.stati {
+  grid-column: 2;
+  grid-row: 2 / span 2;
+  font-size: 0.85em;
+
+  td:first-child {
+    font-family: monospace;
+    padding-right: 12px;
+  }
+
+  pre {
+    background: #f4f4f4;
+    padding: 8px;
+    overflow: auto;
+  }
+}
+
+@media (max-width: 800px) {
+  :host {
+    grid-template-columns: 1fr;
+  }
+  .esito,
+  .stati {
+    grid-column: 1;
+    grid-row: auto;
+  }
+}

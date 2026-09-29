@@ -1,0 +1,8 @@
+<h2>Lista persone</h2>
+<ul>
+  <li *ngFor="let persona of persone">
+    <a [routerLink]="['/dettaglio', persona.id]">
+      {{ persona.nome }} {{ persona.cognome }} {{ persona.eta }}
+    </a>
+  </li>
+</ul>

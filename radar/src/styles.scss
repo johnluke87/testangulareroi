@@ -1,0 +1,57 @@
+:root {
+  --ink: #111827;
+  --muted: #6b7280;
+  --line: #e6e8ee;
+  --paper: #f4f5f7;
+}
+.search-loader {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 5000;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  color: #fff;
+  text-align: center;
+  padding: 1.5rem;
+}
+  body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Manrope", "Segoe UI", sans-serif;
+}
+h1, h2, h3, .h5 { letter-spacing: -0.03em; }
+.btn-primary, .btn-dark {
+  background: var(--ink);
+  border-color: var(--ink);
+}
+.btn-primary:hover, .btn-dark:hover { background: #000; border-color: #000; }
+.btn-outline-secondary, .btn-outline-primary {
+  color: var(--ink);
+  border-color: var(--line);
+  background: #fff;
+}
+.btn-outline-secondary:hover, .btn-outline-primary:hover {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+nav.navbar { background: rgba(244, 245, 247, 0.92) !important; backdrop-filter: blur(10px); border-color: transparent !important; }
+nav .nav-link { color: var(--muted); font-weight: 600; font-size: 0.92rem; }
+nav .active { background: var(--ink) !important; color: #fff !important; }
+.card { border: 1px solid var(--line); border-radius: 1rem; box-shadow: none !important; }
+.badge.text-bg-primary { background: #eef2ff !important; color: #3730a3 !important; }
+.badge.text-bg-light { background: #f3f4f6 !important; color: var(--ink) !important; }
+.map-host { height: 340px; border-radius: 1rem; overflow: hidden; margin: 1rem 0; border: 1px solid var(--line); }
+.pin span { font-size: 20px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
+app-card { display: block; height: 100%; }
+app-card > a { height: 100%; }
+.form-control, .form-select { border-color: var(--line); border-radius: 0.8rem; }
+.form-control:focus, .form-select:focus { border-color: #111827; box-shadow: 0 0 0 0.2rem rgba(17, 24, 39, 0.08); }

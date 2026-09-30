@@ -1,0 +1,30 @@
+<section class="pagina">
+  <a routerLink="/ricette">← Ricette</a>
+
+  @if (ricetta.error(); as errore) {
+    <h1>Non riesco a leggere la ricetta</h1>
+    <p class="errore">{{ messaggio(errore) }}</p>
+    <button type="button" (click)="ricetta.reload()">Riprova</button>
+  } @else if (!ricetta.hasValue()) {
+    <h1>Carico il piatto {{ id() }}…</h1>
+  } @else if (ricetta.value(); as piatto) {
+    <p class="sopracciglio">{{ piatto.cuisine }} · {{ piatto.servings }} porzioni</p>
+    <h1>{{ piatto.name }}</h1>
+    <img class="copertina" [src]="piatto.image" [alt]="piatto.name" />
+    <p>{{ piatto.prepTimeMinutes }} min di preparazione, {{ piatto.cookTimeMinutes }} di cottura.</p>
+
+    <h2>Ingredienti</h2>
+    <ul>
+      @for (ingrediente of piatto.ingredients; track ingrediente) {
+        <li>{{ ingrediente }}</li>
+      }
+    </ul>
+
+    <h2>Passi</h2>
+    <ol>
+      @for (passo of piatto.instructions; track passo) {
+        <li>{{ passo }}</li>
+      }
+    </ol>
+  }
+</section>

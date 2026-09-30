@@ -1,0 +1,39 @@
+<section class="pagina">
+  <p class="sopracciglio">Oggi</p>
+  <h1>La bacheca</h1>
+  <p class="lede">
+    {{ ora() | date: 'EEEE d MMMM, HH:mm:ss' }}. Attività, note e pomodoro restano in questo browser.
+  </p>
+
+  <div class="griglia">
+    <a class="card" routerLink="/attivita">
+      <span class="numero">{{ attivita.aperte() }}</span>
+      <span>attività aperte</span>
+      <small>{{ attivita.fatte() }} già fatte</small>
+    </a>
+    <a class="card" routerLink="/note">
+      <span class="numero">{{ note.elenco().length }}</span>
+      <span>note</span>
+      <small>form reattivo, con guardia sulla bozza</small>
+    </a>
+    <a class="card" routerLink="/pomodoro">
+      <span class="numero">{{ pomodoro.rimanenti() | durata }}</span>
+      <span>{{ pomodoro.fase() === 'focus' ? 'concentrazione' : 'pausa' }}</span>
+      <small>{{ pomodoro.attivo() ? 'in corso' : 'fermo' }}</small>
+    </a>
+    <a class="card" routerLink="/ricette">
+      <span class="numero">HTTP</span>
+      <span>ricette dal web</span>
+      <small>httpResource, interceptor, route param</small>
+    </a>
+  </div>
+
+  <h2>Dove si impara cosa</h2>
+  <ul class="mappa">
+    <li><a routerLink="/attivita">Attività</a> — signal, computed, linkedSignal, &#64;for, form template-driven, input e output</li>
+    <li><a routerLink="/note">Note</a> — form reattivo, FormArray, validatori, canDeactivate, autofocus</li>
+    <li><a routerLink="/pomodoro">Pomodoro</a> — RxJS interval, service singleton, pipe custom</li>
+    <li><a routerLink="/ricette">Ricette</a> — HttpClient, httpResource, interceptor, lazy route</li>
+    <li><a routerLink="/banco">Banco di prova</a> — direttive, pipe, &#64;defer, proiezione, injector, ciclo di vita. La guardia canActivate chiede un patto la prima volta.</li>
+  </ul>
+</section>

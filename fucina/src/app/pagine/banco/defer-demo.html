@@ -1,0 +1,12 @@
+<section>
+  <h2>&#64;defer</h2>
+  <p>Il blocco qui sotto non viene scaricato finché non premi il bottone. In devtools, nel pannello rete, compare un chunk nuovo.</p>
+  <button type="button" #innesco>Carica il blocco</button>
+  @defer (on interaction(innesco)) {
+    <app-blocco-pesante />
+  } @placeholder {
+    <p class="muted">Placeholder: il componente non è ancora partito.</p>
+  } @loading (minimum 400ms) {
+    <p>Sto scaricando il chunk…</p>
+  }
+</section>

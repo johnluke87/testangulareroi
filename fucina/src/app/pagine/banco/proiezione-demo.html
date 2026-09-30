@@ -1,0 +1,20 @@
+<section>
+  <h2>ng-content e model()</h2>
+  <app-scheda>
+    <h3 intestazione>Scheda proiettata</h3>
+    <p>Questo paragrafo cade nel <code>ng-content</code> senza selettore, il corpo.</p>
+    <div azioni>
+      <button type="button">Azione proiettata</button>
+    </div>
+  </app-scheda>
+
+  <h3>model() verso il genitore</h3>
+  <app-contatore [(valore)]="n" />
+  <p>Il genitore legge lo stesso signal: {{ n() }}.</p>
+
+  <h3>ngTemplateOutlet</h3>
+  <ng-template #saluto let-chi>
+    <p>Template riusabile. Ciao {{ chi }}.</p>
+  </ng-template>
+  <ng-container [ngTemplateOutlet]="saluto" [ngTemplateOutletContext]="{ $implicit: nome() }" />
+</section>

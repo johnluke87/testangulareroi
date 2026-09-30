@@ -1,0 +1,27 @@
+<section class="pagina">
+  <div class="testata">
+    <div>
+      <p class="sopracciglio">Form reattivo</p>
+      <h1>Note</h1>
+    </div>
+    <a class="bottone" routerLink="/note/nuova">Nuova nota</a>
+  </div>
+
+  <div class="lista">
+    @for (nota of store.elenco(); track nota.id) {
+      <a class="riga link" [routerLink]="['/note', nota.id]">
+        <span>
+          <strong>{{ nota.titolo }}</strong>
+          <small>{{ nota.aggiornataIl | date: 'd MMM y, HH:mm' }}</small>
+        </span>
+        <span class="etichette">
+          @for (etichetta of nota.etichette; track etichetta) {
+            <span class="pillola bassa">{{ etichetta }}</span>
+          }
+        </span>
+      </a>
+    } @empty {
+      <p>Nessuna nota. Creane una.</p>
+    }
+  </div>
+</section>

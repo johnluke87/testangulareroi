@@ -1,0 +1,59 @@
+.ricerca {
+  width: 100%;
+}
+
+ul {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+}
+
+li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 4px;
+  border-radius: 8px;
+  background: var(--mat-sys-surface-container);
+
+  > span {
+    flex: 1;
+  }
+
+  & + li {
+    margin-top: 4px;
+  }
+}
+
+small {
+  opacity: 0.6;
+  margin-left: 4px;
+}
+
+.vuoto {
+  opacity: 0.6;
+  padding: 8px;
+}
+
+h4 {
+  margin: 8px 0;
+}
+
+.maniglia {
+  cursor: grab;
+  opacity: 0.6;
+}
+
+//l'elemento che segue il mouse durante il trascinamento e il segnaposto lasciato nella lista
+.cdk-drag-preview {
+  box-shadow: var(--mat-sys-level3);
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.3;
+}
+
+.cdk-drop-list-dragging .cdk-drag:not(.cdk-drag-placeholder) {
+  transition: transform 200ms ease;
+}

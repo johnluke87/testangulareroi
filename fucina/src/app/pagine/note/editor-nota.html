@@ -1,0 +1,45 @@
+<section class="pagina">
+  <a routerLink="/note">← Tutte le note</a>
+
+  @if (manca()) {
+    <h1>Nota non trovata</h1>
+    <p>Questo id non è nel localStorage.</p>
+  } @else {
+    <p class="sopracciglio">canDeactivate se esci sporco</p>
+    <h1>{{ id() === 'nuova' ? 'Nuova nota' : 'Modifica' }}</h1>
+
+    <form class="colonna-form" [formGroup]="form" (ngSubmit)="salva()">
+      <label class="campo">
+        Titolo
+        <input formControlName="titolo" appAutofocus />
+        @if (form.controls.titolo.touched && form.controls.titolo.errors?.['required']) {
+          <small class="errore">Il titolo è obbligatorio.</small>
+        }
+        @if (form.controls.titolo.touched && form.controls.titolo.errors?.['minlength']) {
+          <small class="errore">Almeno 3 caratteri.</small>
+        }
+      </label>
+
+      <label class="campo">
+        Testo
+        <textarea formControlName="corpo" rows="8"></textarea>
+      </label>
+
+      <fieldset formArrayName="etichette">
+        <legend>Etichette</legend>
+        @for (etichetta of form.controls.etichette.controls; track $index) {
+          <div class="riga-form">
+            <input [formControl]="etichetta" placeholder="etichetta" />
+            <button type="button" class="testo" (click)="rimuoviEtichetta($index)">Togli</button>
+          </div>
+        }
+        <button type="button" class="testo" (click)="aggiungiEtichetta()">Aggiungi etichetta</button>
+      </fieldset>
+
+      <div class="riga-azioni">
+        <button type="submit">Salva</button>
+        <button type="button" class="testo" (click)="elimina()">Elimina</button>
+      </div>
+    </form>
+  }
+</section>

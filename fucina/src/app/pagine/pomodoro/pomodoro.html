@@ -1,0 +1,15 @@
+<section class="pagina centro">
+  <p class="sopracciglio">RxJS interval dentro un service</p>
+  <h1>{{ pomodoro.fase() === 'focus' ? 'Concentrazione' : 'Pausa' }}</h1>
+  <p class="timer">{{ pomodoro.rimanenti() | durata }}</p>
+  <div class="riga-azioni">
+    @if (pomodoro.attivo()) {
+      <button type="button" (click)="pomodoro.pausa()">Pausa</button>
+    } @else {
+      <button type="button" (click)="pomodoro.avvia()">Avvia</button>
+    }
+    <button type="button" class="secondario" (click)="pomodoro.salta()">Salta fase</button>
+    <button type="button" class="testo" (click)="pomodoro.reset()">Azzera</button>
+  </div>
+  <p class="muted">Esci pure dalla pagina: il timer resta acceso, perché il service è uno solo per tutta l'app.</p>
+</section>

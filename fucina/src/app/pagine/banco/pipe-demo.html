@@ -1,0 +1,12 @@
+<section>
+  <h2>Pipe</h2>
+  <ul class="mappa">
+    <li>date: {{ adesso() | date: 'EEEE d MMMM y' }}</li>
+    <li>currency: {{ 18.5 | currency: 'EUR' }}</li>
+    <li>slice + titlecase: {{ 'officina di signal' | slice: 0 : 8 | titlecase }}</li>
+    <li>lowercase: {{ 'FUCINA' | lowercase }}</li>
+    <li>durata (custom, pura): {{ 125 | durata }}</li>
+    <li>json: {{ scheda() | json }}</li>
+  </ul>
+  <p class="muted">Una pipe pura ricalcola solo se cambia l'argomento. Le impure girano a ogni change detection: qui non ne usiamo.</p>
+</section>

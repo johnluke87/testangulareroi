@@ -1,0 +1,47 @@
+<mat-form-field appearance="outline" class="ricerca">
+  <mat-label>Cerca una località</mat-label>
+  <mat-icon matPrefix>search</mat-icon>
+  <input matInput [formControl]="search" autocomplete="off" placeholder="es. Bormio" />
+</mat-form-field>
+
+@if (results(); as found) {
+  <ul class="risultati">
+    @for (r of found; track r.id) {
+      <li>
+        <span>
+          {{ r.name }}
+          <small>{{ r.region }}{{ r.region && r.country ? ', ' : '' }}{{ r.country }}</small>
+        </span>
+        @if (favorites.has(r.id)) {
+          <mat-icon title="Già nei preferiti">check</mat-icon>
+        } @else {
+          <button mat-icon-button type="button" (click)="add(r)" aria-label="Aggiungi ai preferiti">
+            <mat-icon>add</mat-icon>
+          </button>
+        }
+      </li>
+    } @empty {
+      <li class="vuoto">Nessuna località trovata</li>
+    }
+  </ul>
+}
+
+<h4>I tuoi preferiti</h4>
+<ul class="preferiti" cdkDropList (cdkDropListDropped)="drop($event)">
+  @for (p of favorites.places(); track p.id) {
+    <li cdkDrag>
+      <mat-icon cdkDragHandle class="maniglia" title="Trascina per riordinare">drag_indicator</mat-icon>
+      <span>
+        {{ p.name }}
+        @if (p.region) {
+          <small>{{ p.region }}</small>
+        }
+      </span>
+      <button mat-icon-button type="button" (click)="favorites.remove(p.id)" aria-label="Rimuovi">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </li>
+  } @empty {
+    <li class="vuoto">Nessun preferito: cercane uno qui sopra</li>
+  }
+</ul>

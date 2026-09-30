@@ -1,0 +1,18 @@
+<div class="guscio">
+  <aside>
+    <a class="marca" routerLink="/bacheca">
+      <span>Fucina</span>
+      <small>officina angular</small>
+    </a>
+    <nav>
+      @for (voce of voci; track voce.path) {
+        <a [routerLink]="voce.path" routerLinkActive="attivo">{{ voce.etichetta }}</a>
+      }
+    </nav>
+    <p class="percorso">{{ percorso() }}</p>
+  </aside>
+  <div class="colonna">
+    <router-outlet />
+    <app-toasts />
+  </div>
+</div>

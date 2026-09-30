@@ -1,0 +1,13 @@
+<section>
+  <h2>Injector gerarchico</h2>
+  <p>
+    Le due schede hanno ciascuna <code>providers: [ContatoreLocale]</code>.
+    Sono due istanze diverse. <code>API_RICETTE</code> invece è un token nell'injector root: uguale per tutti.
+  </p>
+  <div class="griglia">
+    <app-banco-locale />
+    <app-banco-locale />
+  </div>
+  <button type="button" class="testo" (click)="dimentica()">Dimentica il patto e torna in bacheca</button>
+  <p class="muted">Poi riapri il banco: la guardia ti ferma di nuovo.</p>
+</section>

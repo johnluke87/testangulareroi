@@ -1,0 +1,58 @@
+<section class="pagina">
+  <p class="sopracciglio">Signal e form a template</p>
+  <h1>Attività</h1>
+  <p class="lede">
+    Il filtro <code>?stato=</code> arriva dal router come <code>input()</code>. La ricerca è un
+    <code>linkedSignal</code>: si svuota quando cambi filtro, e puoi riscriverla.
+  </p>
+
+  <nav class="filtri">
+    <a routerLink="/attivita" [queryParams]="{ stato: 'tutte' }" [class.attivo]="stato() === 'tutte'">Tutte</a>
+    <a routerLink="/attivita" [queryParams]="{ stato: 'aperte' }" [class.attivo]="stato() === 'aperte'">Aperte</a>
+    <a routerLink="/attivita" [queryParams]="{ stato: 'fatte' }" [class.attivo]="stato() === 'fatte'">Fatte</a>
+  </nav>
+
+  <label class="campo">
+    Cerca
+    <input
+      [ngModel]="testo()"
+      (ngModelChange)="testo.set($event)"
+      name="cerca"
+      placeholder="titolo"
+    />
+  </label>
+
+  <form class="riga-form" (ngSubmit)="aggiungi()">
+    <input
+      [ngModel]="bozza()"
+      (ngModelChange)="bozza.set($event)"
+      name="titolo"
+      required
+      minlength="3"
+      placeholder="Nuova attività"
+    />
+    <select [ngModel]="prioritaBozza()" (ngModelChange)="prioritaBozza.set($event)" name="priorita">
+      <option value="alta">alta</option>
+      <option value="media">media</option>
+      <option value="bassa">bassa</option>
+    </select>
+    <button type="submit" [disabled]="bozza().trim().length < 3">Aggiungi</button>
+  </form>
+
+  @let quante = visibili().length;
+  <p class="muted">{{ quante }} in elenco</p>
+
+  <div class="lista">
+    @for (voce of visibili(); track voce.id) {
+      <app-riga-attivita
+        [titolo]="voce.titolo"
+        [priorita]="voce.priorita"
+        [fatta]="voce.fatta"
+        (toggle)="store.alterna(voce.id)"
+        (elimina)="store.rimuovi(voce.id)"
+      />
+    } @empty {
+      <p>Niente da mostrare con questo filtro.</p>
+    }
+  </div>
+</section>

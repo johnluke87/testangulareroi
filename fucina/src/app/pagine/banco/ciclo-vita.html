@@ -1,0 +1,14 @@
+<section>
+  <h2>Ciclo di vita</h2>
+  <p>Ricarica la route per rileggere l'ordine. L'effect riparte anche quando premi +1, senza rileggere il diario (è in <code>untracked</code>, altrimenti andrebbe in loop).</p>
+  <div class="riga-azioni">
+    <button type="button" (click)="contatore.update((n) => n + 1)">+1 al contatore</button>
+    <button type="button" class="secondario" (click)="mettiFuoco()">viewChild: focus</button>
+    <input #casella placeholder="casella" />
+  </div>
+  <ol>
+    @for (riga of diario(); track $index) {
+      <li>{{ riga }}</li>
+    }
+  </ol>
+</section>

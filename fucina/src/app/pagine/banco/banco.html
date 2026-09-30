@@ -1,0 +1,10 @@
+<section class="pagina">
+  <p class="sopracciglio">Route figlie</p>
+  <h1>Banco di prova</h1>
+  <nav class="filtri">
+    @for (voce of voci; track voce.path) {
+      <a [routerLink]="voce.path" routerLinkActive="attivo">{{ voce.etichetta }}</a>
+    }
+  </nav>
+  <router-outlet />
+</section>

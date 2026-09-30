@@ -1,0 +1,52 @@
+<section class="pagina">
+  <p class="sopracciglio">httpResource</p>
+  <h1>Ricette</h1>
+  <p class="lede">
+    La lista si aggiorna da sola quando cambia l'URL. L'interceptor registra quanto ci mette ogni chiamata.
+  </p>
+
+  <label class="campo">
+    Cerca un piatto
+    <input
+      [value]="ricerca()"
+      (input)="ricerca.set($any($event.target).value)"
+      placeholder="pizza, pasta, chicken…"
+    />
+  </label>
+
+  @if (ricette.error(); as errore) {
+    <p class="errore">{{ messaggio(errore) }}</p>
+    <button type="button" (click)="ricette.reload()">Riprova</button>
+  } @else if (!ricette.hasValue()) {
+    <p>Cerco ricette…</p>
+  } @else {
+    @if (ricette.isLoading()) {
+      <p class="muted">Aggiorno…</p>
+    }
+    <div class="griglia">
+      @for (ricetta of ricette.value().recipes; track ricetta.id) {
+        <a class="card piatto" [routerLink]="['/ricette', ricetta.id]">
+          <img [src]="ricetta.image" [alt]="ricetta.name" />
+          <strong>{{ ricetta.name }}</strong>
+          <small>{{ ricetta.cuisine }} · {{ ricetta.rating }}</small>
+          @switch (ricetta.difficulty) {
+            @case ('Easy') { <span class="pillola bassa">facile</span> }
+            @case ('Medium') { <span class="pillola media">media</span> }
+            @default { <span class="pillola alta">impegnativa</span> }
+          }
+        </a>
+      } @empty {
+        <p>Nessuna ricetta per questa ricerca.</p>
+      }
+    </div>
+  }
+
+  <h2>Ultime chiamate</h2>
+  <ul class="mappa">
+    @for (traccia of tracciati.elenco(); track $index) {
+      <li>{{ traccia.ok ? 'ok' : 'errore' }} · {{ traccia.ms }} ms · {{ traccia.url }}</li>
+    } @empty {
+      <li>Ancora nessuna.</li>
+    }
+  </ul>
+</section>

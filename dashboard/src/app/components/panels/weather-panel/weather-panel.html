@@ -1,0 +1,54 @@
+@if (editing()) {
+  <div class="barra">
+    <button mat-button type="button" (click)="editing.set(false)">
+      <mat-icon>check</mat-icon>
+      Fatto
+    </button>
+  </div>
+  <!-- @defer: il codice dell'editor (form Material + drag & drop) si scarica solo quando lo apri -->
+  @defer {
+    <app-favorite-places-editor />
+  } @loading (minimum 200ms) {
+    <p class="stato">Caricamento…</p>
+  }
+} @else {
+  <div class="barra">
+    <!-- una "pillola" per località: il click cambia quella mostrata sotto -->
+    <div class="localita" role="tablist" aria-label="Località">
+      @for (p of places(); track p.id) {
+        <button
+          type="button"
+          role="tab"
+          class="pillola"
+          [class.selezionata]="p.id === selectedPlace()?.id"
+          [attr.aria-selected]="p.id === selectedPlace()?.id"
+          (click)="select(p)"
+        >
+          @if (p.id === here()?.id) {
+            📍
+          }
+          {{ p.name }}
+        </button>
+      }
+      @if (currentPlace.isLoading()) {
+        <span class="pillola in-attesa">📍 …</span>
+      }
+    </div>
+    <button mat-icon-button type="button" (click)="editing.set(true)" aria-label="Gestisci località" title="Gestisci località">
+      <mat-icon>edit_location</mat-icon>
+    </button>
+  </div>
+
+  @if (locationError(); as message) {
+    <p class="stato">
+      📍 {{ message }}
+      <button mat-button type="button" (click)="currentPlace.reload()">Riprova</button>
+    </p>
+  }
+
+  @if (selectedPlace(); as place) {
+    <app-place-forecast [place]="place" [isCurrent]="place.id === here()?.id" />
+  } @else if (!currentPlace.isLoading()) {
+    <p class="stato">Nessuna località: aggiungine una con il tasto qui sopra.</p>
+  }
+}

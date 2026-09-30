@@ -1,0 +1,14 @@
+<section>
+  <h2>Direttive, classi, eventi</h2>
+  <p appEvidenzia>Passa il mouse: <code>appEvidenzia</code> è una direttiva di attributo. Non crea tag, modifica questo.</p>
+  <p appEvidenzia [colore]="'#d7e6df'">Stesso selettore, input <code>colore</code> diverso.</p>
+
+  <p [class.acceso]="acceso()" [style.color]="tinta()">
+    Property binding sulla classe e sullo stile. Acceso: {{ acceso() }}.
+  </p>
+  <button type="button" (click)="acceso.set(!acceso())">Inverti la classe</button>
+  <label class="campo">
+    Colore
+    <input [value]="tinta()" (input)="tinta.set($any($event.target).value)" />
+  </label>
+</section>

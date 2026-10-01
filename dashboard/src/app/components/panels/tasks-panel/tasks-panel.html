@@ -1,0 +1,30 @@
+<p class="intestazione">{{ showingToday() ? 'Da fare oggi' : 'Niente per oggi · i prossimi' }}</p>
+
+@if (tasks.error()) {
+  <p class="stato">Impossibile caricare i task</p>
+} @else if (tasks.isLoading() && tasks.tasks().length === 0) {
+  <p class="stato">Caricamento…</p>
+} @else {
+  <ul class="lista">
+    @for (t of shown(); track t.id) {
+      <li>
+        <span class="priorita" [attr.data-priority]="t.priority"></span>
+        <mat-checkbox [checked]="t.completedAt !== null" (change)="toggle(t)">{{ t.title }}</mat-checkbox>
+        <span class="quando">
+          @if (!showingToday() && t.dueDate) {
+            {{ t.dueDate | relativeDay: clock.now() }}
+          }
+          @if (t.dueSlot) {
+            {{ slotLabels[t.dueSlot] }}
+          }
+        </span>
+      </li>
+    } @empty {
+      <li class="stato">Nessun task da fare 🎉</li>
+    }
+  </ul>
+}
+
+@if (errorMessage(); as message) {
+  <p class="errore">{{ message }}</p>
+}

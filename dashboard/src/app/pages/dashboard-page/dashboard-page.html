@@ -1,0 +1,23 @@
+<main class="dashboard">
+  <!--<h1>{{title()}}</h1>-->
+  <header class="intestazione">
+    <h1>{{ title() }}</h1>
+    <span class="utente">{{ auth.user()?.username }}</span>
+    <button mat-button type="button" (click)="logout()">
+      <mat-icon>logout</mat-icon>
+      Esci
+    </button>
+  </header>
+  <section class="griglia">
+    @for (p of panels; track p.id) {
+    <app-dashboard-panel [title]="p.title" [icon]="p.icon" [subtitle]="p.subtitle" [class.wide]="p.wide">
+      @switch (p.id) {
+      @case ('today') { <app-today-panel /> }
+      @case ('weather') { <app-weather-panel /> }
+      @case ('tasks') { <app-tasks-panel /> }
+      @default { <p>In arrivo…</p> }
+      }
+    </app-dashboard-panel>
+    }
+  </section>
+</main>

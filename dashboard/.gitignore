@@ -39,6 +39,9 @@ testem.log
 /typings
 __screenshots__/
 
+# Backend PHP: la configurazione vera contiene la password del database
+/api/private/config.php
+
 # System files
 .DS_Store
 Thumbs.db

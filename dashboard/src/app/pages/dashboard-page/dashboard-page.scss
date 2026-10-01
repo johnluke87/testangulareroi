@@ -1,0 +1,26 @@
+.griglia {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+}
+
+//con una sola colonna (telefono) "span 2" creerebbe una colonna in più, quindi solo da 2 colonne in su
+@media (min-width: 680px) {
+    .wide {
+        grid-column: span 2;
+    }
+}
+
+.intestazione {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    h1 {
+        margin-right: auto;
+    }
+}
+
+.utente {
+    opacity: 0.7;
+}

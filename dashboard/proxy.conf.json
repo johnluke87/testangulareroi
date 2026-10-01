@@ -1,0 +1,10 @@
+{
+    "/extra/dashboard/api": {
+      "target": "https://www.gianlucadario.com",
+      "secure": true,
+      "changeOrigin": true,
+      "headers": {
+        "Origin": "https://www.gianlucadario.com"
+      }
+    }
+  }

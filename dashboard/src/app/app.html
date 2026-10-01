@@ -1,14 +1,1 @@
-<main class="dashboard">
-  <h1>{{title()}}</h1>
-  <section class="griglia">
-    @for (p of panels; track p.id) {
-    <app-dashboard-panel [title]="p.title" [icon]="p.icon" [subtitle]="p.subtitle" [class.wide]="p.wide">
-      @switch (p.id) {
-        @case ('today') { <app-today-panel /> }
-        @case ('weather') { <app-weather-panel /> }
-        @default { <p>In arrivo…</p> }
-      }
-    </app-dashboard-panel>
-    }
-  </section>
-</main>
+<router-outlet />

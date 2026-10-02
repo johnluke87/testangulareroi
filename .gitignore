@@ -1,0 +1,5 @@
+# Confronto auto ha il suo repository: https://github.com/johnluke87/confrontoauto
+/confronto-auto/
+
+# configurazione locale di Claude Code (avvio dei server di sviluppo)
+/.claude/

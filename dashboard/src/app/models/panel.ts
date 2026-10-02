@@ -1,4 +1,4 @@
-export type PanelId = 'today' | 'weather' | 'agenda' | 'tasks' | 'games';
+export type PanelId = 'today' | 'weather' | 'agenda' | 'tasks' | 'games' | 'links' | 'notes' | 'quote' | 'search' | 'news' | 'onthisday' | 'home';
 
 export interface PanelConfig {
     id: PanelId;

@@ -1,0 +1,37 @@
+.lista {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+}
+
+li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+a {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.stato {
+  opacity: 0.7;
+}
+
+.errore {
+  color: var(--mat-sys-error);
+}

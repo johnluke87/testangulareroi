@@ -1,0 +1,44 @@
+.campi {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  // spazio sopra, altrimenti l'etichetta del primo campo "outline" viene tagliata dal bordo
+  padding-top: 8px !important;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.riga {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin-bottom: 16px;
+}
+
+.etichetta {
+  opacity: 0.75;
+}
+
+.data {
+  align-items: flex-start;
+  margin-bottom: 0;
+
+  mat-form-field {
+    flex: 1 1 200px;
+  }
+}
+
+.rapidi {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 8px;
+}
+
+.errore {
+  color: var(--mat-sys-error);
+  margin: 0;
+}

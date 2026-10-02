@@ -1,0 +1,33 @@
+@if (notes.error()) {
+  <p class="stato">Impossibile caricare le note</p>
+} @else if (notes.isLoading() && notes.notes().length === 0) {
+  <p class="stato">Caricamento…</p>
+} @else {
+  <ul class="lista">
+    @for (note of notes.notes(); track note.id) {
+      <li>
+        <p>{{ note.body }}</p>
+        <button mat-icon-button type="button" aria-label="Elimina nota" (click)="remove(note.id)">
+          <mat-icon>close</mat-icon>
+        </button>
+      </li>
+    } @empty {
+      <li class="stato">Nessuna nota</li>
+    }
+  </ul>
+}
+
+<form (ngSubmit)="add()">
+  <mat-form-field appearance="outline">
+    <mat-label>Nota veloce</mat-label>
+    <textarea matInput rows="2" [ngModel]="draft()" (ngModelChange)="draft.set($event)" name="nota" maxlength="1000"></textarea>
+  </mat-form-field>
+  <button mat-button type="submit" [disabled]="saving() || draft().trim() === ''">
+    <mat-icon>add</mat-icon>
+    Salva
+  </button>
+</form>
+
+@if (errorMessage(); as message) {
+  <p class="errore">{{ message }}</p>
+}

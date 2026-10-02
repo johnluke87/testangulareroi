@@ -1,0 +1,45 @@
+<!-- le sezioni ANSA: una riga di "pillole" che scorre in orizzontale -->
+<div class="sezioni" role="tablist" aria-label="Sezione">
+  @for (f of news.feedList(); track f.id) {
+    <button
+      type="button"
+      role="tab"
+      class="chip"
+      [class.attivo]="news.selectedFeed() === f.id"
+      [attr.aria-selected]="news.selectedFeed() === f.id"
+      (click)="news.selectedFeed.set(f.id)"
+    >
+      {{ f.label }}
+    </button>
+  }
+</div>
+
+@if (news.news.error()) {
+  <p class="stato">Le notizie non sono disponibili in questo momento.</p>
+} @else if (news.items().length === 0 && news.news.isLoading()) {
+  <p class="stato">Caricamento…</p>
+} @else {
+  <ul class="lista">
+    @for (n of news.items(); track n.link) {
+      <li>
+        <!-- target _blank: l'articolo si apre in una nuova scheda; rel noopener: la pagina ANSA non può controllare la nostra -->
+        <a [href]="n.link" target="_blank" rel="noopener">
+          <span class="ora">
+            @if (n.publishedAt) {
+              {{ n.publishedAt | date: (isToday(n) ? 'HH:mm' : 'd MMM') }}
+            }
+          </span>
+          <span class="testo">
+            <span class="titolo">{{ n.title }}</span>
+            @if (n.summary) {
+              <small>{{ n.summary }}</small>
+            }
+          </span>
+        </a>
+      </li>
+    } @empty {
+      <li class="stato">Nessuna notizia in questa sezione.</li>
+    }
+  </ul>
+  <p class="fonte">Fonte: ANSA.it</p>
+}

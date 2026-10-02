@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { Clock } from '../../../core/services/clock';
 import { DatePipe } from '@angular/common';
 
@@ -10,6 +10,9 @@ import { DatePipe } from '@angular/common';
 })
 export class TodayPanel {
   protected clock = inject(Clock);//inietta il servizio clock che c0è su corse/services/clock.ts
+
+  //il nome da salutare ("Buon pomeriggio, gianluca"); facoltativo
+  name = input<string | undefined>();
 
   greeting = computed(() => {
     const hour = this.clock.now().getHours();

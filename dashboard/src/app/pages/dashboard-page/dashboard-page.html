@@ -1,20 +1,69 @@
 <main class="dashboard">
-  <!--<h1>{{title()}}</h1>-->
+  <!-- l'ex blocco "Oggi" ora è la riga in alto: saluto, ora e data -->
+  <!-- riga in alto: saluto e ora a sinistra, ricerca al centro, impostazioni ed Esci a destra -->
   <header class="intestazione">
-    <h1>{{ title() }}</h1>
-    <span class="utente">{{ auth.user()?.username }}</span>
-    <button mat-button type="button" (click)="logout()">
-      <mat-icon>logout</mat-icon>
-      Esci
-    </button>
+    <app-today-panel class="oggi" [name]="auth.user()?.username" />
+
+    <div class="ricerca">
+      <!-- on immediate: arriva subito dopo la prima schermata, ma il suo codice resta fuori dal bundle iniziale -->
+      @defer (on immediate) {
+        <app-search-panel />
+      } @placeholder {
+        <div class="ricerca-segnaposto"></div>
+      }
+    </div>
+
+    <div class="azioni">
+      <a mat-icon-button routerLink="/settings" aria-label="Impostazioni" title="Impostazioni">
+        <mat-icon>settings</mat-icon>
+      </a>
+      <button mat-button type="button" (click)="logout()" aria-label="Esci" title="Esci">
+        <mat-icon>logout</mat-icon>
+        <!-- sul telefono resta solo l'icona -->
+        <span class="testo-esci">Esci</span>
+      </button>
+    </div>
   </header>
   <section class="griglia">
     @for (p of panels; track p.id) {
     <app-dashboard-panel [title]="p.title" [icon]="p.icon" [subtitle]="p.subtitle" [class.wide]="p.wide">
       @switch (p.id) {
-      @case ('today') { <app-today-panel /> }
       @case ('weather') { <app-weather-panel /> }
+      @case ('agenda') {
+        @defer (on viewport) {
+          <app-agenda-panel />
+        } @placeholder {
+          <p>Agenda…</p>
+        }
+      }
       @case ('tasks') { <app-tasks-panel /> }
+      <!-- anche questi solo quando arrivano sullo schermo: tengono leggero il caricamento iniziale -->
+      @case ('links') {
+        @defer (on viewport) { <app-links-panel /> } @placeholder { <p>Link…</p> }
+      }
+      @case ('notes') {
+        @defer (on viewport) { <app-notes-panel /> } @placeholder { <p>Note…</p> }
+      }
+      @case ('quote') {
+        @defer (on viewport) { <app-quote-panel /> } @placeholder { <p>Frase del giorno…</p> }
+      }
+      @case ('news') {
+        @defer (on viewport) { <app-news-panel /> } @placeholder { <p>Notizie…</p> }
+      }
+      @case ('home') {
+        @defer (on viewport) { <app-home-panel /> } @placeholder { <p>Casa…</p> }
+      }
+      @case ('onthisday') {
+        @defer (on viewport) { <app-on-this-day-panel /> } @placeholder { <p>In questo giorno…</p> }
+      }
+      @case ('games') {
+        <!-- @defer (on viewport): il codice della card Giochi si scarica solo quando la card compare sullo schermo -->
+        @defer (on viewport) {
+          <app-games-panel />
+        } @placeholder {
+          <p>Giochi…</p>
+        }
+      }
       @default { <p>In arrivo…</p> }
       }
     </app-dashboard-panel>

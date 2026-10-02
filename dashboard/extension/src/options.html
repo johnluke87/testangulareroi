@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Setup Pagina Nuova Scheda · Opzioni</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="shared.js" defer></script>
+  <script src="options.js" defer></script>
+</head>
+<body>
+  <main class="card">
+    <img src="icons/icon-128.png" alt="" width="64" height="64">
+    <h1>Setup Pagina Nuova Scheda</h1>
+    <p>La pagina che si apre quando premi <kbd>Ctrl</kbd> + <kbd>T</kbd> o il pulsante <strong>+</strong> delle schede.</p>
+
+    <form id="form" novalidate>
+      <label for="url">Indirizzo</label>
+      <input id="url" type="url" placeholder="https://www.esempio.it" autocomplete="url" required>
+      <div class="buttons">
+        <button type="submit">Salva</button>
+        <button type="button" id="try" class="secondary">Apri per provare</button>
+      </div>
+    </form>
+    <p id="message" class="message" role="status"></p>
+
+    <p class="note">
+      L'indirizzo è salvato nelle impostazioni del browser (e sincronizzato con il tuo account, se la
+      sincronizzazione è attiva). L'estensione non raccoglie né invia nessun dato.
+    </p>
+  </main>
+</body>
+</html>

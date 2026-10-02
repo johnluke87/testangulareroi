@@ -1,0 +1,75 @@
+<h2 mat-dialog-title>{{ editing ? 'Modifica task' : 'Nuovo task' }}</h2>
+
+<!-- Il <form> avvolge contenuto E bottoni: così "Salva" (type="submit") e il tasto Invio inviano il form -->
+<form [formGroup]="form" (ngSubmit)="save()">
+  <mat-dialog-content class="campi">
+    <mat-form-field appearance="outline">
+      <mat-label>Cosa devi fare</mat-label>
+      <input matInput formControlName="title" [maxlength]="titleMax" cdkFocusInitial />
+      <!-- il contatore dei caratteri, a destra sotto il campo -->
+      <mat-hint align="end">{{ form.controls.title.value.length }} / {{ titleMax }}</mat-hint>
+      <mat-error>Scrivi un titolo</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Note (facoltative)</mat-label>
+      <textarea matInput formControlName="notes" rows="3"></textarea>
+      <mat-error>Note troppo lunghe</mat-error>
+    </mat-form-field>
+
+    <div class="riga">
+      <span class="etichetta">Priorità</span>
+      <!-- formControlName funziona anche sui bottoni a scelta singola di Material -->
+      <mat-button-toggle-group formControlName="priority" aria-label="Priorità">
+        @for (p of priorities; track p) {
+          <mat-button-toggle [value]="p">{{ priorityLabels[p] }}</mat-button-toggle>
+        }
+      </mat-button-toggle-group>
+    </div>
+
+    <div class="riga data">
+      <mat-form-field appearance="outline">
+        <mat-label>Quando</mat-label>
+        <!-- readonly + (click): la data si sceglie solo dal calendario, così non si scrivono date impossibili -->
+        <input matInput readonly formControlName="dueDate" [matDatepicker]="picker" (click)="picker.open()" />
+        <mat-datepicker-toggle matIconSuffix [for]="picker" />
+        <mat-datepicker #picker />
+      </mat-form-field>
+
+      <div class="rapidi">
+        <button mat-stroked-button type="button" (click)="setDueInDays(0)">Oggi</button>
+        <button mat-stroked-button type="button" (click)="setDueInDays(1)">Domani</button>
+        @if (form.controls.dueDate.value) {
+          <button mat-icon-button type="button" (click)="clearDueDate()" aria-label="Togli la data">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </div>
+    </div>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Momento della giornata</mat-label>
+      <mat-select formControlName="dueSlot">
+        <mat-option [value]="null">Qualsiasi momento</mat-option>
+        @for (s of slots; track s) {
+          <mat-option [value]="s">{{ slotLabels[s] }}</mat-option>
+        }
+      </mat-select>
+      @if (form.controls.dueSlot.disabled) {
+        <mat-hint>Prima scegli una data</mat-hint>
+      }
+    </mat-form-field>
+
+    @if (errorMessage(); as message) {
+      <p class="errore" role="alert">{{ message }}</p>
+    }
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" mat-dialog-close>Annulla</button>
+    <!-- disabilitato durante il salvataggio: evita di creare due volte lo stesso task col doppio clic -->
+    <button mat-flat-button type="submit" [disabled]="saving()">
+      {{ saving() ? 'Salvataggio…' : 'Salva' }}
+    </button>
+  </mat-dialog-actions>
+</form>

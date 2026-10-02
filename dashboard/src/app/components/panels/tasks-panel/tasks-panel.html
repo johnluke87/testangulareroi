@@ -8,16 +8,19 @@
   <ul class="lista">
     @for (t of shown(); track t.id) {
       <li>
-        <span class="priorita" [attr.data-priority]="t.priority"></span>
+        <app-priority-dot [priority]="t.priority" />
         <mat-checkbox [checked]="t.completedAt !== null" (change)="toggle(t)">{{ t.title }}</mat-checkbox>
         <span class="quando">
-          @if (!showingToday() && t.dueDate) {
-            {{ t.dueDate | relativeDay: clock.now() }}
-          }
-          @if (t.dueSlot) {
-            {{ slotLabels[t.dueSlot] }}
+          <!-- per i task di oggi basta il momento ("Sera"); per gli altri la scadenza completa -->
+          @if (showingToday()) {
+            @if (t.dueSlot) {
+              {{ slotLabels[t.dueSlot] }}
+            }
+          } @else {
+            {{ t | dueLabel: clock.now() }}
           }
         </span>
+        <app-task-actions-menu [task]="t" />
       </li>
     } @empty {
       <li class="stato">Nessun task da fare 🎉</li>
@@ -25,6 +28,23 @@
   </ul>
 }
 
+@if (overdueCount() > 0) {
+  <button mat-button type="button" class="scaduti" (click)="dialogs.openList('overdue')">
+    <mat-icon>warning</mat-icon>
+    {{ overdueCount() }} {{ overdueCount() === 1 ? 'scaduto' : 'scaduti' }}
+  </button>
+}
+
 @if (errorMessage(); as message) {
   <p class="errore">{{ message }}</p>
 }
+
+<div class="azioni">
+  <button mat-button type="button" (click)="dialogs.openForm()">
+    <mat-icon>add</mat-icon>
+    Nuovo
+  </button>
+  <button mat-button type="button" (click)="dialogs.openList()">
+    Tutti i task ({{ tasks.tasks().length }})
+  </button>
+</div>

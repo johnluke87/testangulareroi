@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { computed, inject, Injectable } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { Observable, tap } from 'rxjs';
+import { finalize, from, mergeMap, Observable, tap, toArray } from 'rxjs';
 import { NewTask, Task, TaskChanges } from '../../models/task';
 import { API_BASE_URL } from '../api';
+import { Auth } from './auth';
 
 /**
  * L'unico punto dell'app che parla con l'API dei task.
@@ -21,7 +22,13 @@ export class Tasks {
   //mentre aspetta la risposta, sa di essere "in caricamento";
   //quando arriva la risposta, dentro c'è l'array dei task;
   //se qualcosa va storto, dentro c'è l'errore.
+  private auth = inject(Auth);
+
+  //MULTI-UTENTE: params = chi è collegato. Quando cambia utente (logout e login di un amico sullo stesso browser)
+  //la risorsa si ricarica da sola; quando non c'è nessuno (undefined) non carica niente e la lista resta vuota.
+  //Così i task di un utente non restano mai in memoria per quello dopo.
   private readonly list = rxResource({
+    params: () => this.auth.user()?.username,
     stream: () => this.http.get<Task[]>(`${this.api}/tasks`, { params: { status: 'all' } }),
   });
 
@@ -49,5 +56,18 @@ export class Tasks {
   //e, per ottenere la risposta, ci vuole un altro .subscribe()
   remove(id: number): Observable<void> {
     return this.http.delete<void>(`${this.api}/tasks/${id}`).pipe(tap(() => this.list.reload()));
+  }
+
+  /**
+   * Elimina più task. Una DELETE per task (l'API ne cancella uno alla volta), al massimo 4 in parallelo
+   * (mergeMap con concorrenza 4: non sommergiamo il server), e UNA sola ricarica della lista alla fine.
+   * finalize: ricarico anche se qualcuna fallisce, così la lista mostra cosa è stato davvero eliminato.
+   */
+  removeMany(ids: number[]): Observable<void[]> {
+    return from(ids).pipe(
+      mergeMap((id) => this.http.delete<void>(`${this.api}/tasks/${id}`), 4),
+      toArray(),
+      finalize(() => this.list.reload()),
+    );
   }
 }

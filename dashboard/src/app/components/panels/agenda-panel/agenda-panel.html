@@ -1,0 +1,57 @@
+@if (google.status.error()) {
+  <p class="stato">Impossibile contattare il server</p>
+} @else if (configured() === undefined) {
+  <p class="stato">Caricamento…</p>
+} @else if (!configured()) {
+  <p class="stato">L'Agenda non è ancora configurata sul server (manca il collegamento a Google in config.php).</p>
+} @else if (!google.isConnected()) {
+  <p class="stato">
+    Collega il tuo Google Calendar nelle <a routerLink="/settings" fragment="agenda">impostazioni</a>
+    per vedere qui i tuoi impegni.
+  </p>
+} @else if (google.needsReconnect()) {
+  <p class="stato">
+    Google ha chiesto di ricollegare il tuo account: vai nelle
+    <a routerLink="/settings" fragment="agenda">impostazioni</a>.
+  </p>
+} @else if (google.events.error()) {
+  <p class="stato">Google Calendar non risponde, riprovo tra poco.</p>
+} @else if (!google.events.hasValue()) {
+  <p class="stato">Caricamento…</p>
+} @else {
+  @for (day of agenda(); track day.key) {
+    <h4 class="giorno">{{ day.key | relativeDay: clock.now() : 'EEEE d MMMM' }}</h4>
+    <ul class="lista">
+      @for (e of day.items; track e.id) {
+        <li [class.passato]="e.past" [class.adesso]="e.ongoing">
+          <!-- il pallino col colore del calendario (validato dal server: solo #rrggbb) -->
+          <span class="colore" [style.background]="e.color" [title]="e.calendarName"></span>
+          <span class="orario">
+            @if (e.allDay) {
+              Tutto il giorno
+            } @else {
+              {{ e.start | date: 'HH:mm' }}–{{ e.end | date: 'HH:mm' }}
+            }
+          </span>
+          <span class="testo">
+            @if (e.link) {
+              <a [href]="e.link" target="_blank" rel="noopener">{{ e.title }}</a>
+            } @else {
+              {{ e.title }}
+            }
+            @if (e.location) {
+              <small>{{ e.location }}</small>
+            }
+          </span>
+          @if (e.ongoing) {
+            <span class="etichetta">adesso</span>
+          } @else if (e.startsInMinutes !== null) {
+            <span class="etichetta">tra {{ e.startsInMinutes }} min</span>
+          }
+        </li>
+      }
+    </ul>
+  } @empty {
+    <p class="stato">Nessun impegno nei prossimi giorni 🎉</p>
+  }
+}

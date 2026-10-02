@@ -1,0 +1,74 @@
+@if (!home.configValue()) {
+  <p class="stato">Caricamento…</p>
+} @else if (!home.isConfigured()) {
+  <p class="stato">
+    Collega i dispositivi Smart Life nelle <a routerLink="/settings" fragment="casa">impostazioni</a>.
+  </p>
+} @else if (home.devices.error()) {
+  <p class="stato">Il server non risponde, riprovo tra poco.</p>
+} @else if (home.devicesError(); as message) {
+  <p class="stato errore">{{ message }}</p>
+} @else if (!home.devices.hasValue()) {
+  <p class="stato">Caricamento…</p>
+} @else {
+  <div class="aggiornamento">
+    @if (home.lastUpdated(); as at) {
+      <small>Aggiornato alle {{ at | date: 'HH:mm:ss' }}</small>
+    }
+    <!-- legge subito lo stato vero, saltando la cache del server -->
+    <button
+      mat-icon-button
+      type="button"
+      (click)="home.refreshNow()"
+      [disabled]="home.devices.isLoading()"
+      aria-label="Aggiorna ora"
+      title="Aggiorna ora"
+    >
+      <mat-icon [class.gira]="home.devices.isLoading()">refresh</mat-icon>
+    </button>
+  </div>
+
+  @if (errorMessage(); as message) {
+    <p class="stato errore" role="alert">{{ message }}</p>
+  }
+
+  @for (room of home.rooms(); track room.name) {
+    <!-- il nome della stanza resta in alto mentre scorri (come i giorni dell'Agenda) -->
+    <h4 class="stanza">{{ room.name }}</h4>
+    <ul class="lista">
+      @for (d of room.devices; track d.id) {
+        <li [class.offline]="!d.online">
+          <span class="punto" [title]="d.online ? 'Online' : 'Non raggiungibile'"></span>
+          <span class="nome">{{ d.name }}</span>
+          <span class="valori">
+            @for (v of d.values; track v.code) {
+              @if (v.switchable && d.online) {
+                <!-- interruttore: lo sposti e parte il comando (disabilitato mentre aspetta la risposta) -->
+                <mat-slide-toggle
+                  [checked]="v.on === true"
+                  [disabled]="pending().has(key(d, v))"
+                  (change)="toggle(d, v, $event.checked)"
+                  [attr.aria-label]="v.label + ' ' + d.name"
+                >
+                  <!-- l'etichetta ("Canale 1", "Canale 2") serve solo se il dispositivo ha più interruttori -->
+                  @if (switchCount(d) > 1) {
+                    <small>{{ v.label }}</small>
+                  }
+                </mat-slide-toggle>
+              } @else {
+                <span class="valore" [class.allerta]="v.alert" [title]="v.label">
+                  <small>{{ v.label }}</small> {{ v.text }}
+                </span>
+              }
+            }
+            @if (!d.online) {
+              <small class="off">offline</small>
+            }
+          </span>
+        </li>
+      }
+    </ul>
+  } @empty {
+    <p class="stato">Nessun dispositivo nell'account Smart Life collegato.</p>
+  }
+}

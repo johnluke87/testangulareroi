@@ -42,6 +42,9 @@ __screenshots__/
 # Backend PHP: la configurazione vera contiene la password del database
 /api/private/config.php
 
+# Estensione: i pacchetti si rigenerano con extension/tools/build.ps1
+/extension/dist/
+
 # System files
 .DS_Store
 Thumbs.db

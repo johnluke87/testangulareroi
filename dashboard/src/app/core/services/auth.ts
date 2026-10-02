@@ -43,6 +43,16 @@ export class Auth {
       );
   }
 
+  /** Crea un account nuovo: il server fa anche il login (imposta il cookie), quindi sei subito dentro. */
+  register(username: string, password: string): Observable<AuthUser> {
+    return this.http
+      .post<{ user: AuthUser }>(`${this.api}/auth/register`, { username, password })
+      .pipe(
+        map((res) => res.user),
+        tap((user) => this.currentUser.set(user)),
+      );
+  }
+
   logout(): Observable<unknown> {
     // finalize: anche se il server non risponde, per l'app non sei più collegato
     return this.http.post(`${this.api}/auth/logout`, {}).pipe(finalize(() => this.currentUser.set(null)));

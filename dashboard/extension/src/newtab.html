@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nuova scheda</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- niente JavaScript scritto qui dentro: nelle estensioni è vietato, va in file separati -->
+  <script src="shared.js" defer></script>
+  <script src="newtab.js" defer></script>
+</head>
+<body class="newtab">
+  <!-- visibile solo al primo utilizzo (classe "setup" aggiunta da newtab.js) -->
+  <main class="card">
+    <img src="icons/icon-128.png" alt="" width="64" height="64">
+    <h1>Quale pagina vuoi aprire a ogni nuova scheda?</h1>
+    <p>Scrivi l'indirizzo del sito: la tua dashboard, un motore di ricerca, quello che preferisci.
+       Potrai cambiarlo quando vuoi dalle opzioni dell'estensione.</p>
+
+    <form id="form" novalidate>
+      <label for="url">Indirizzo</label>
+      <input id="url" type="url" placeholder="https://www.esempio.it" autocomplete="url" required>
+      <button type="submit">Salva e apri</button>
+    </form>
+    <p id="message" class="message" role="status"></p>
+  </main>
+</body>
+</html>

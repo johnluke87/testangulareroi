@@ -1,0 +1,32 @@
+.intro {
+  margin-top: 0;
+}
+
+.campi {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+
+  mat-form-field {
+    width: 100%;
+  }
+}
+
+.esito {
+  margin: 0 0 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--mat-sys-secondary-container);
+  color: var(--mat-sys-on-secondary-container);
+
+  &.errore {
+    background: var(--mat-sys-error-container);
+    color: var(--mat-sys-on-error-container);
+  }
+}
+
+.bottoni {
+  display: flex;
+  gap: 8px;
+}

@@ -1,0 +1,30 @@
+@if (history.day.error()) {
+  <p class="stato">Wikipedia non risponde in questo momento.</p>
+} @else if (history.value(); as day) {
+  @if (day.holidays.length > 0) {
+    <p class="ricorrenze">🎉 {{ day.holidays.join(' · ') }}</p>
+  }
+
+  <ul class="lista">
+    @for (e of day.events; track $index) {
+      <li [class.evidenza]="e.highlighted">
+        <span class="anno">{{ e.year }}</span>
+        <span class="testo">
+          @if (e.link) {
+            <a [href]="e.link" target="_blank" rel="noopener">{{ e.text }}</a>
+          } @else {
+            {{ e.text }}
+          }
+        </span>
+        @if (e.thumbnail) {
+          <img [src]="e.thumbnail" alt="" loading="lazy" />
+        }
+      </li>
+    } @empty {
+      <li class="stato">Niente di registrato per oggi.</li>
+    }
+  </ul>
+  <p class="fonte">Fonte: Wikipedia</p>
+} @else {
+  <p class="stato">Caricamento…</p>
+}

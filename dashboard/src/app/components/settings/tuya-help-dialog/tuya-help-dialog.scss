@@ -1,0 +1,73 @@
+.guida {
+  font-size: 0.9rem;
+  line-height: 1.5;
+
+  a {
+    color: var(--mat-sys-primary);
+  }
+
+  code {
+    padding: 1px 5px;
+    border-radius: 4px;
+    background: var(--mat-sys-surface-container-high);
+  }
+}
+
+.intro {
+  margin-top: 0;
+}
+
+section {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--mat-sys-outline-variant);
+}
+
+h3 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 6px;
+  font-size: 1rem;
+}
+
+// il numero del passo in un cerchietto
+.numero {
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+  font-size: 0.875rem;
+}
+
+ol,
+ul {
+  margin: 4px 0;
+  padding-left: 22px;
+
+  li + li {
+    margin-top: 3px;
+  }
+}
+
+.nota {
+  margin: 8px 0 0;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--mat-sys-surface-container);
+  font-size: 0.85rem;
+}
+
+dt {
+  margin-top: 8px;
+  font-weight: 500;
+}
+
+dd {
+  margin: 2px 0 0 0;
+  opacity: 0.85;
+}

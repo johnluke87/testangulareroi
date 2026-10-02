@@ -40,6 +40,8 @@
           <button mat-flat-button type="submit" [disabled]="submitting()">
             {{ submitting() ? 'Accesso…' : 'Accedi' }}
           </button>
+          <!-- routerLink: un link "interno" all'app, cambia pagina senza ricaricare tutto -->
+          <a mat-button routerLink="/register">Non hai un account? Registrati</a>
         </form>
       </mat-card-content>
     </mat-card>

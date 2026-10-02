@@ -1,0 +1,6 @@
+// Il menu Material viene disegnato in un "overlay" fuori dal componente, ma le voci nascono
+// da questo template, quindi lo stile qui sotto le raggiunge comunque.
+.hint {
+  margin-left: 12px;
+  opacity: 0.6;
+}

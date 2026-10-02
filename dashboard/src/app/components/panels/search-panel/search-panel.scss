@@ -1,0 +1,11 @@
+// Ora sta nella riga in alto della dashboard: campo e bottone sulla stessa riga
+form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+mat-form-field {
+  flex: 1;
+  min-width: 0;
+}

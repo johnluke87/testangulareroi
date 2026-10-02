@@ -1,0 +1,37 @@
+@if (links.error()) {
+  <p class="stato">Impossibile caricare i link</p>
+} @else if (links.isLoading() && links.links().length === 0) {
+  <p class="stato">Caricamento…</p>
+} @else {
+  <ul class="lista">
+    @for (link of links.links(); track link.id) {
+      <li>
+        <a [href]="link.url" target="_blank" rel="noopener noreferrer">{{ link.label }}</a>
+        <button mat-icon-button type="button" aria-label="Elimina link" (click)="remove(link.id)">
+          <mat-icon>close</mat-icon>
+        </button>
+      </li>
+    } @empty {
+      <li class="stato">Nessun link</li>
+    }
+  </ul>
+}
+
+<form (ngSubmit)="add()">
+  <mat-form-field appearance="outline">
+    <mat-label>Nome</mat-label>
+    <input matInput [ngModel]="label()" (ngModelChange)="label.set($event)" name="nome" maxlength="80" />
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Indirizzo</mat-label>
+    <input matInput [ngModel]="url()" (ngModelChange)="url.set($event)" name="url" maxlength="500" placeholder="https://" />
+  </mat-form-field>
+  <button mat-button type="submit" [disabled]="saving() || label().trim() === '' || url().trim() === ''">
+    <mat-icon>add</mat-icon>
+    Aggiungi
+  </button>
+</form>
+
+@if (errorMessage(); as message) {
+  <p class="errore">{{ message }}</p>
+}

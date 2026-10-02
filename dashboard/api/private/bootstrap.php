@@ -11,8 +11,19 @@ date_default_timezone_set('UTC');
 
 require __DIR__ . '/http.php';
 require __DIR__ . '/db.php';
+require __DIR__ . '/rate-limit.php';
 require __DIR__ . '/auth.php';
 require __DIR__ . '/tasks.php';
+require __DIR__ . '/notes.php';
+require __DIR__ . '/links.php';
+require __DIR__ . '/places.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/bgg.php';
+require __DIR__ . '/http-client.php';
+require __DIR__ . '/crypto.php';
+require __DIR__ . '/google.php';
+require __DIR__ . '/news.php';
+require __DIR__ . '/tuya.php';
 
 function config(): array
 {

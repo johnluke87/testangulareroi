@@ -1,2 +1,4 @@
-<p>{{ clock.now() | date: 'HH:mm' }}, {{ clock.now() | date: 'EEEE d MMMM y' }}</p>
-<p>{{ greeting() }}</p>
+<!-- una riga sola: saluto, ora, data (non è più un blocco della griglia ma l'intestazione della pagina) -->
+<h1 class="saluto">{{ greeting() }}{{ name() ? ', ' + name() : '' }}</h1>
+<span class="ora">{{ clock.now() | date: 'HH:mm' }}</span>
+<span class="data">{{ clock.now() | date: 'EEEE d MMMM' }}</span>

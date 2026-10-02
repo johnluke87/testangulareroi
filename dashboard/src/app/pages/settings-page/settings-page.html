@@ -1,0 +1,154 @@
+<main class="pagina">
+  <header class="intestazione">
+    <a mat-icon-button routerLink="/" aria-label="Torna alla dashboard">
+      <mat-icon>arrow_back</mat-icon>
+    </a>
+    <h1>Impostazioni</h1>
+  </header>
+
+  <!-- Meteo: lo stesso editor che si apre dal pannello (riuso del componente) -->
+  <mat-card appearance="outlined" id="cerca">
+    <mat-card-header>
+      <mat-icon mat-card-avatar>search</mat-icon>
+      <mat-card-title>Motore di ricerca</mat-card-title>
+      <mat-card-subtitle>La barra Cerca della dashboard apre questo sito</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-form-field appearance="outline">
+        <mat-label>Motore</mat-label>
+        <mat-select
+          [value]="userSettings.settings()?.searchEngine ?? 'google'"
+          [disabled]="searchSaving() || userSettings.isLoading()"
+          (selectionChange)="saveSearchEngine($event.value)"
+        >
+          @for (engine of searchEngines; track engine.id) {
+            <mat-option [value]="engine.id">{{ engine.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      @if (searchMessage(); as message) {
+        <span class="messaggio">{{ message }}</span>
+      }
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card appearance="outlined" id="meteo">
+    <mat-card-header>
+      <mat-icon mat-card-avatar>wb_sunny</mat-icon>
+      <mat-card-title>Località del meteo</mat-card-title>
+      <mat-card-subtitle>Salvate nel tuo account: le ritrovi su ogni computer</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <app-favorite-places-editor />
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card appearance="outlined" id="agenda">
+    <mat-card-header>
+      <mat-icon mat-card-avatar>event</mat-icon>
+      <mat-card-title>Google Calendar</mat-card-title>
+      <mat-card-subtitle>Per vedere nell'Agenda gli eventi dei tuoi calendari</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      @if (googleMessage(); as message) {
+        <p class="avviso" role="status">{{ message }}</p>
+      }
+
+      @if (!google.statusInfo()) {
+        <p class="messaggio">Caricamento…</p>
+      } @else if (!google.statusInfo()?.configured) {
+        <p class="messaggio">Il server non è ancora configurato per Google (manca il client in config.php).</p>
+      } @else if (!google.isConnected()) {
+        <p>
+          Autorizzi l'accesso <strong>in sola lettura</strong> sulla pagina di Google:
+          la tua password Google non passa mai da qui, e puoi scollegare quando vuoi.
+        </p>
+        <!-- non è un link di Angular: connect() porta l'intera pagina su Google e poi si torna qui -->
+        <button mat-flat-button type="button" (click)="google.connect()">
+          <mat-icon>link</mat-icon>
+          Collega Google
+        </button>
+      } @else {
+        <p>Collegato come <strong>{{ google.statusInfo()?.email ?? 'account Google' }}</strong></p>
+
+        @if (google.needsReconnect()) {
+          <p class="avviso">Google ha revocato il permesso: ricollegalo.</p>
+          <button mat-flat-button type="button" (click)="google.connect()">Ricollega Google</button>
+        } @else {
+          <p class="messaggio">Quali calendari vuoi vedere nell'Agenda?</p>
+          @if (google.calendars.isLoading() && calendars().length === 0) {
+            <p class="messaggio">Caricamento dei calendari…</p>
+          }
+          <ul class="calendari">
+            @for (c of calendars(); track c.id) {
+              <li>
+                <mat-checkbox
+                  [checked]="c.selected"
+                  [disabled]="googleBusy()"
+                  (change)="toggleCalendar(c.id, $event.checked)"
+                >
+                  <span class="colore" [style.background]="c.color"></span>
+                  {{ c.name }}
+                  @if (c.primary) {
+                    <small>(principale)</small>
+                  }
+                </mat-checkbox>
+              </li>
+            }
+          </ul>
+        }
+
+        <button mat-stroked-button type="button" (click)="disconnectGoogle()" [disabled]="googleBusy()">
+          <mat-icon>link_off</mat-icon>
+          Scollega Google
+        </button>
+      }
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card appearance="outlined" id="giochi">
+    <mat-card-header>
+      <mat-icon mat-card-avatar>casino</mat-icon>
+      <mat-card-title>BoardGameGeek</mat-card-title>
+      <mat-card-subtitle>Il tuo nome utente BGG, per mostrare la tua collezione</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <form class="riga" [formGroup]="bggForm" (ngSubmit)="saveBgg()">
+        <mat-form-field appearance="outline">
+          <mat-label>Utente BoardGameGeek</mat-label>
+          <input matInput formControlName="username" autocomplete="off" />
+        </mat-form-field>
+        <button mat-flat-button type="submit" [disabled]="bggSaving() || userSettings.isLoading()">Salva</button>
+        @if (bggMessage(); as message) {
+          <span class="messaggio">{{ message }}</span>
+        }
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card appearance="outlined" id="casa">
+    <mat-card-header>
+      <mat-icon mat-card-avatar>home</mat-icon>
+      <mat-card-title>Casa (Smart Life)</mat-card-title>
+      <mat-card-subtitle>I tuoi sensori e dispositivi, tramite Tuya</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <!-- tutta la sezione è un componente a sé: form, salvataggio e prova del collegamento -->
+      <app-tuya-settings />
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card appearance="outlined" id="account">
+    <mat-card-header>
+      <mat-icon mat-card-avatar>person</mat-icon>
+      <mat-card-title>Account</mat-card-title>
+      <mat-card-subtitle>Collegato come {{ auth.user()?.username }}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <button mat-stroked-button type="button" (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        Esci
+      </button>
+    </mat-card-content>
+  </mat-card>
+</main>

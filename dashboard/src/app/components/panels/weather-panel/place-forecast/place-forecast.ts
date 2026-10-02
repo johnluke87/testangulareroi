@@ -1,10 +1,9 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { Component, computed, inject, input, linkedSignal } from '@angular/core';
+import { Component, computed, inject, input, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { Place } from '../../../../models/weather';
 import { Clock } from '../../../../core/services/clock';
 import { WeatherProvider } from '../../../../core/services/weather-provider';
-import { FavoritePlaces } from '../../../../core/services/favorite-places';
 import { RelativeDayPipe } from '../../../../shared/pipes/relative-day-pipe';
 import { WeatherIconPipe } from '../../../../shared/pipes/weather-icon-pipe';
 import { WeatherLabelPipe } from '../../../../shared/pipes/weather-label-pipe';
@@ -24,20 +23,20 @@ export class PlaceForecast {
 
   private weather = inject(WeatherProvider);
   protected clock = inject(Clock);
-  protected favorites = inject(FavoritePlaces);
-
-  protected isFavorite = computed(() => this.favorites.has(this.place().id));
 
   forecast = rxResource({
     params: () => this.place(),
     stream: ({ params }) => this.weather.getForecast(params),
   });
 
-  //indice del giorno scelto: si può cambiare col click, ma torna a 0 (oggi) quando cambia la località
-  protected selectedDayIndex = linkedSignal({
-    source: () => this.place().id,
-    computation: () => 0,
-  });
+  //indice del giorno scelto: un signal normale, quindi RESTA lo stesso quando cambi località
+  //(prima era un linkedSignal che tornava a "oggi" a ogni cambio di località)
+  protected selectedDayIndex = signal(0);
+
+  //le previsioni da mostrare: undefined mentre carica o se c'è un errore (value() in errore lancerebbe)
+  protected data = computed(() =>
+    !this.forecast.isLoading() && this.forecast.hasValue() ? this.forecast.value() : undefined,
+  );
 
   protected selectedDay = computed(() =>
     this.forecast.hasValue() ? this.forecast.value().daily[this.selectedDayIndex()] : undefined,

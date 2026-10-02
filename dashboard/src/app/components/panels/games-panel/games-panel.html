@@ -1,0 +1,210 @@
+<!-- hideSingleSelectionIndicator: niente ✓ sul bottone scelto (rubava spazio e faceva uscire i bottoni dalla card) -->
+<mat-button-toggle-group
+  class="schede"
+  hideSingleSelectionIndicator
+  [value]="tab()"
+  (change)="tab.set($event.value)"
+  aria-label="Sezione"
+>
+  <mat-button-toggle value="tonight">Stasera</mat-button-toggle>
+  <mat-button-toggle value="collection">Collezione</mat-button-toggle>
+  <mat-button-toggle value="hot">Del momento</mat-button-toggle>
+</mat-button-toggle-group>
+
+<!-- ===== Stato della collezione (serve a "Stasera" e "Collezione") ===== -->
+<ng-template #collectionState>
+  @if (games.collection.error(); as error) {
+    <p class="stato">{{ errorText(error) }}</p>
+  } @else if (!games.collection.hasValue()) {
+    <p class="stato">Caricamento…</p>
+  } @else {
+    @switch (games.collectionStatus()) {
+      @case ('no_username') {
+        <p class="stato">
+          Imposta il tuo utente BoardGameGeek nelle
+          <a routerLink="/settings" fragment="giochi">impostazioni</a>.
+        </p>
+      }
+      @case ('invalid_username') {
+        <p class="stato">
+          BoardGameGeek non conosce questo utente: controllalo nelle
+          <a routerLink="/settings" fragment="giochi">impostazioni</a>.
+        </p>
+      }
+      @case ('pending') {
+        <p class="stato">BoardGameGeek sta preparando la tua collezione, qualche secondo…</p>
+      }
+    }
+  }
+</ng-template>
+
+@switch (tab()) {
+  <!-- ===== STASERA ===== -->
+  @case ('tonight') {
+    @if (games.collectionStatus() === 'ok') {
+      <div class="filtro">
+        <span>Giocatori</span>
+        <div class="scelte">
+          @for (n of playerCounts; track n) {
+            <button
+              type="button"
+              class="chip"
+              [class.attivo]="filters().players === n"
+              (click)="patchFilters({ players: n })"
+            >
+              {{ n }}{{ n === 8 ? '+' : '' }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- gli altri filtri stanno in un pannello che si apre, così la card resta compatta -->
+      <div class="barra-filtri">
+        <button mat-button type="button" (click)="showFilters.set(!showFilters())" [attr.aria-expanded]="showFilters()">
+          <mat-icon>tune</mat-icon>
+          Filtri{{ activeFilters() ? ' (' + activeFilters() + ')' : '' }}
+          <mat-icon>{{ showFilters() ? 'expand_less' : 'expand_more' }}</mat-icon>
+        </button>
+        @if (activeFilters()) {
+          <button mat-button type="button" (click)="resetFilters()">Azzera</button>
+        }
+      </div>
+
+      @if (showFilters()) {
+        @let f = filters();
+        <div class="filtri">
+          <!-- mat-slider con DUE "pomelli" (start e end) = un intervallo min–max -->
+          <div class="cursore">
+            <span>Durata <strong>{{ minutesLabel(f.minMinutes, f.maxMinutes) }}</strong></span>
+            <mat-slider [min]="limits.minutes.min" [max]="limits.minutes.max" [step]="limits.minutes.step">
+              <input matSliderStartThumb [value]="f.minMinutes" (valueChange)="patchFilters({ minMinutes: $event })" aria-label="Durata minima" />
+              <input matSliderEndThumb [value]="f.maxMinutes" (valueChange)="patchFilters({ maxMinutes: $event })" aria-label="Durata massima" />
+            </mat-slider>
+          </div>
+
+          <div class="cursore">
+            <span>Voto BGG <strong>{{ rangeLabel(f.minRating, f.maxRating) }}</strong></span>
+            <mat-slider [min]="limits.rating.min" [max]="limits.rating.max" [step]="limits.rating.step">
+              <input matSliderStartThumb [value]="f.minRating" (valueChange)="patchFilters({ minRating: $event })" aria-label="Voto minimo" />
+              <input matSliderEndThumb [value]="f.maxRating" (valueChange)="patchFilters({ maxRating: $event })" aria-label="Voto massimo" />
+            </mat-slider>
+          </div>
+
+          <div class="cursore">
+            <span>
+              Peso <strong>{{ rangeLabel(f.minWeight, f.maxWeight) }}</strong>
+              <small>1 leggero · 5 pesante</small>
+            </span>
+            <mat-slider [min]="limits.weight.min" [max]="limits.weight.max" [step]="limits.weight.step">
+              <input matSliderStartThumb [value]="f.minWeight" (valueChange)="patchFilters({ minWeight: $event })" aria-label="Peso minimo" />
+              <input matSliderEndThumb [value]="f.maxWeight" (valueChange)="patchFilters({ maxWeight: $event })" aria-label="Peso massimo" />
+            </mat-slider>
+            @if (games.weightsPending()) {
+              <small class="nota">Sto ancora scaricando il peso di alcuni giochi da BGG…</small>
+            }
+          </div>
+
+          <button
+            type="button"
+            class="chip"
+            [class.attivo]="f.neverPlayed"
+            (click)="patchFilters({ neverPlayed: !f.neverPlayed })"
+          >
+            Solo mai giocati
+          </button>
+        </div>
+      }
+
+      <div class="pesca">
+        <button mat-flat-button type="button" (click)="pick()" [disabled]="candidates().length === 0">
+          <mat-icon>casino</mat-icon>
+          {{ picked() ? 'Un altro' : 'A cosa giochiamo?' }}
+        </button>
+        <span class="conteggio">{{ candidates().length }} {{ candidates().length === 1 ? 'gioco adatto' : 'giochi adatti' }}</span>
+      </div>
+
+      @if (picked(); as g) {
+        <a class="scelto" [href]="bggUrl(g.id)" target="_blank" rel="noopener">
+          @if (g.thumbnail) {
+            <img [src]="g.thumbnail" alt="" />
+          }
+          <span class="dati">
+            <strong>{{ g.name }}</strong>
+            <small>{{ playersLabel(g) }} · {{ timeLabel(g) }}</small>
+            <small>
+              @if (g.rating) { ★ {{ g.rating }} }
+              @if (g.weight) { · peso {{ g.weight }} }
+              · {{ g.numPlays === 0 ? 'mai giocato!' : 'giocato ' + g.numPlays + ' volte' }}
+            </small>
+          </span>
+        </a>
+      } @else if (candidates().length === 0) {
+        <p class="stato">Nessun gioco della tua collezione va bene così: prova ad allargare i filtri.</p>
+      }
+    } @else {
+      <ng-container [ngTemplateOutlet]="collectionState" />
+    }
+  }
+
+  <!-- ===== COLLEZIONE ===== -->
+  @case ('collection') {
+    @if (games.collectionStatus() === 'ok') {
+      <p class="conteggio">{{ games.collectionGames().length }} giochi</p>
+      <ul class="lista">
+        @for (g of games.collectionGames(); track g.id) {
+          <li>
+            <a [href]="bggUrl(g.id)" target="_blank" rel="noopener">
+              @if (g.thumbnail) {
+                <img [src]="g.thumbnail" alt="" loading="lazy" />
+              } @else {
+                <span class="segnaposto"></span>
+              }
+              <span class="dati">
+                <span>{{ g.name }}</span>
+                <small>
+                  {{ playersLabel(g) }} · {{ timeLabel(g) }}
+                  @if (g.weight) { · peso {{ g.weight }} }
+                </small>
+              </span>
+              @if (g.rating) {
+                <span class="voto">★ {{ g.rating }}</span>
+              }
+            </a>
+          </li>
+        } @empty {
+          <li class="stato">La collezione è vuota: segna su BGG i giochi che possiedi.</li>
+        }
+      </ul>
+    } @else {
+      <ng-container [ngTemplateOutlet]="collectionState" />
+    }
+  }
+
+  <!-- ===== DEL MOMENTO ===== -->
+  @case ('hot') {
+    @if (games.hot.error(); as error) {
+      <p class="stato">{{ errorText(error) }}</p>
+    } @else if (!games.hot.hasValue()) {
+      <p class="stato">Caricamento…</p>
+    } @else {
+      <ol class="lista">
+        @for (g of games.hotGames().slice(0, 10); track g.id) {
+          <li>
+            <a [href]="bggUrl(g.id)" target="_blank" rel="noopener">
+              <span class="posizione">{{ g.rank }}</span>
+              @if (g.thumbnail) {
+                <img [src]="g.thumbnail" alt="" loading="lazy" />
+              }
+              <span class="dati">
+                <span>{{ g.name }}</span>
+                @if (g.year) {
+                  <small>{{ g.year }}</small>
+                }
+              </span>
+            </a>
+          </li>
+        }
+      </ol>
+    }
+  }
+}

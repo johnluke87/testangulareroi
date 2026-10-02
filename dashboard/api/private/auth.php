@@ -24,6 +24,10 @@ function handle_login(): never
         throw new HttpException(400, 'Inserisci utente e password');
     }
 
+    // Oltre al blocco del singolo account (5 errori), un limite per IP: con la registrazione libera
+    // qualcuno potrebbe provare una password comune su tanti utenti diversi.
+    enforce_rate_limit('login', 30, 15 * 60);
+
     $stmt = db()->prepare(
         'SELECT id, username, password_hash, locked_until FROM dashboard_users WHERE username = ?'
     );
@@ -61,6 +65,54 @@ function handle_login(): never
 
     start_session($userId);
     json_response(['user' => ['username' => $user['username']]]);
+}
+
+/** POST /auth/register  { "username": "...", "password": "..." }  -> crea l'account ed entra subito */
+function handle_register(): never
+{
+    // interruttore in config.php: se un giorno vuoi chiudere le iscrizioni basta mettere false
+    if (!(config()['registration_open'] ?? false)) {
+        throw new HttpException(403, 'Le registrazioni sono chiuse');
+    }
+    // al massimo 5 nuovi account all'ora dalla stessa rete (contro i programmi che creano account a raffica)
+    enforce_rate_limit('register', 5, 3600);
+
+    $body = read_json_body();
+    $username = is_string($body['username'] ?? null) ? trim($body['username']) : '';
+    $password = is_string($body['password'] ?? null) ? $body['password'] : '';
+    validate_new_credentials($username, $password);
+
+    try {
+        db()->prepare('INSERT INTO dashboard_users (username, password_hash, created_at) VALUES (?, ?, ?)')
+            ->execute([$username, password_hash($password, password_algorithm()), now_utc()]);
+    } catch (PDOException $e) {
+        // 23000 = violato un vincolo UNIQUE: quel nome utente esiste già
+        if ($e->getCode() === '23000') {
+            throw new HttpException(409, 'Questo nome utente è già in uso');
+        }
+        throw $e;
+    }
+
+    $userId = (int) db()->lastInsertId();
+    start_session($userId);
+    json_response(['user' => ['username' => $username]], 201);
+}
+
+/** Le stesse regole per chi si registra da solo e per setup.php. */
+function validate_new_credentials(string $username, string $password): void
+{
+    if (preg_match('/^[A-Za-z0-9._-]{3,50}$/', $username) !== 1) {
+        throw new HttpException(400, 'Nome utente: da 3 a 50 caratteri tra lettere, numeri, punto, trattino e underscore');
+    }
+    if (mb_strlen($password) < 12) {
+        throw new HttpException(400, 'La password deve avere almeno 12 caratteri');
+    }
+    if (strlen($password) > 1024) {
+        throw new HttpException(400, 'Password troppo lunga');
+    }
+    if (strcasecmp($password, $username) === 0) {
+        throw new HttpException(400, 'La password non può essere uguale al nome utente');
+    }
 }
 
 /** POST /auth/logout: cancella la sessione dal database e il cookie dal browser. */

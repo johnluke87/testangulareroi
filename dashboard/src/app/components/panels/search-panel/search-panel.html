@@ -1,0 +1,9 @@
+<form (ngSubmit)="search()">
+  <!-- subscriptSizing dynamic: niente spazio vuoto sotto il campo (lì andrebbero i messaggi di errore, che qui non ci sono) -->
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>Cerca su {{ engine().label }}</mat-label>
+    <input matInput [ngModel]="query()" (ngModelChange)="query.set($event)" name="q" autocomplete="off" />
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+  <button mat-flat-button type="submit" [disabled]="query().trim() === ''">Cerca</button>
+</form>

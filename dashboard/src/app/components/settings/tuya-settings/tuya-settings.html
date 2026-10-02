@@ -1,0 +1,65 @@
+<p class="intro">
+  Collega i dispositivi della tua app <strong>Smart Life</strong> tramite un progetto (gratuito) sulla
+  piattaforma sviluppatori di Tuya. Le chiavi sono tue e restano sul server: il secret è salvato cifrato.
+</p>
+
+<!-- apre la guida completa in una finestra (TuyaHelpDialog) -->
+<button mat-stroked-button type="button" (click)="openHelp()">
+  <mat-icon>help_outline</mat-icon>
+  Come trovo questi codici?
+</button>
+
+<form [formGroup]="form" (ngSubmit)="save()" class="campi">
+  <mat-form-field appearance="outline">
+    <mat-label>Data center</mat-label>
+    <mat-select formControlName="region">
+      @for (r of home.configValue()?.regions ?? []; track r.id) {
+        <mat-option [value]="r.id">{{ r.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Access ID</mat-label>
+    <input matInput formControlName="accessId" autocomplete="off" />
+    <mat-error>Lettere e numeri, almeno 10</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Access Secret</mat-label>
+    <!-- autocomplete="new-password": il password manager non ci mette la password della dashboard -->
+    <input
+      matInput
+      formControlName="accessSecret"
+      [type]="hideSecret() ? 'password' : 'text'"
+      autocomplete="new-password"
+      [placeholder]="home.isConfigured() ? 'già salvato: lascia vuoto per non cambiarlo' : ''"
+    />
+    <button mat-icon-button matSuffix type="button" (click)="hideSecret.set(!hideSecret())" aria-label="Mostra o nascondi">
+      <mat-icon>{{ hideSecret() ? 'visibility' : 'visibility_off' }}</mat-icon>
+    </button>
+    <mat-error>Lettere e numeri, almeno 10</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>UID dell'account Smart Life</mat-label>
+    <input matInput formControlName="appUid" autocomplete="off" />
+    <mat-error>Lettere e numeri</mat-error>
+  </mat-form-field>
+
+  @if (result(); as r) {
+    <p class="esito" [class.errore]="!r.ok" role="status">{{ r.text }}</p>
+  }
+
+  <div class="bottoni">
+    <button mat-flat-button type="submit" [disabled]="saving()">
+      {{ saving() ? 'Provo il collegamento…' : 'Salva e prova' }}
+    </button>
+    @if (home.isConfigured()) {
+      <button mat-stroked-button type="button" (click)="remove()">
+        <mat-icon>link_off</mat-icon>
+        Rimuovi
+      </button>
+    }
+  </div>
+</form>

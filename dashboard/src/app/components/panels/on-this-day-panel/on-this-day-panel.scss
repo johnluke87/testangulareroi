@@ -1,0 +1,76 @@
+.stato {
+  opacity: 0.75;
+}
+
+.ricorrenze {
+  margin: 0 0 8px;
+  font-size: 0.8125rem;
+  opacity: 0.8;
+}
+
+.lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 6px 0;
+
+  & + li {
+    border-top: 1px solid var(--mat-sys-outline-variant);
+  }
+
+  // gli eventi "scelti" da Wikipedia: testo un po' più grande e anno colorato
+  &.evidenza {
+    .anno {
+      color: var(--mat-sys-primary);
+    }
+
+    .testo {
+      font-size: 0.9375rem;
+    }
+  }
+}
+
+.anno {
+  width: 40px;
+  flex-shrink: 0;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.8125rem;
+  padding-top: 1px;
+}
+
+.testo {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.875rem;
+
+  a {
+    color: inherit;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+img {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.fonte {
+  margin: 8px 0 0;
+  font-size: 0.75rem;
+  opacity: 0.5;
+  text-align: right;
+}

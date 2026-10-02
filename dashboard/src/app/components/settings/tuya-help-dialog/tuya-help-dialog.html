@@ -1,0 +1,127 @@
+<h2 mat-dialog-title>Come trovo i codici di Tuya</h2>
+
+<mat-dialog-content class="guida">
+  <p class="intro">
+    La dashboard legge i tuoi dispositivi <strong>Smart Life</strong> tramite la piattaforma per sviluppatori di Tuya
+    (l'azienda dietro Smart Life). Serve un "progetto cloud" gratuito, da creare una volta sola. Ci vogliono circa 10 minuti.
+  </p>
+
+  <section>
+    <h3><span class="numero">1</span> Crea l'account e il progetto</h3>
+    <ol>
+      <li>Vai su <a href="https://platform.tuya.com" target="_blank" rel="noopener">platform.tuya.com</a> e registrati.</li>
+      <li>Nella barra a sinistra clicca <strong>Cloud</strong> (l'icona a nuvola). Il menu <em>Product / Device / Firmware</em> non ti serve: è per chi produce dispositivi.</li>
+      <li>Scegli <strong>Development</strong> e poi, in alto a destra, <strong>Create Cloud Project</strong>.</li>
+      <li>
+        Compila così:
+        <ul>
+          <li><strong>Project Name</strong>: quello che vuoi, per esempio <code>Dashboard</code></li>
+          <li><strong>Industry</strong>: <em>Smart Home</em></li>
+          <li><strong>Development Method</strong>: <em>Smart Home</em></li>
+          <li><strong>Data Center</strong>: <em>Central Europe Data Center</em> (al punto 2 aggiungiamo anche l'altro)</li>
+        </ul>
+      </li>
+      <li>Nella pagina <strong>Authorize API Services</strong> lascia selezionati i servizi proposti, in particolare <strong>IoT Core</strong> e <strong>Authorization Token Management</strong>, e premi <strong>Authorize</strong>.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h3><span class="numero">2</span> Abilita entrambi i data center europei</h3>
+    <p>
+      L'app Smart Life <strong>non mostra</strong> su quale data center sta il tuo account: in Italia può essere
+      <em>Central Europe</em> o <em>Western Europe</em>. Se il progetto non ha quello giusto, il collegamento fallisce con
+      un errore tipo "data center inconsistent".
+    </p>
+    <ol>
+      <li>Nel progetto apri la scheda <strong>Overview</strong>.</li>
+      <li>Alla riga <strong>Data Center</strong> premi <strong>Edit</strong> (la matita).</li>
+      <li>Spunta <strong>sia</strong> <em>Central Europe Data Center</em> <strong>sia</strong> <em>Western Europe Data Center</em> e salva.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h3><span class="numero">3</span> Collega il tuo account Smart Life</h3>
+    <ol>
+      <li>Nel progetto apri la scheda <strong>Devices</strong> e poi la sotto-scheda <strong>Link App Account</strong>.</li>
+      <li>Premi <strong>Add App Account</strong>.</li>
+      <li>Come <em>Device Linking Method</em> lascia <strong>Automatic Link (Recommended)</strong>: così vengono collegati tutti i tuoi dispositivi, anche quelli che aggiungerai in futuro.</li>
+      <li>
+        Se compare la scelta dei permessi (<em>Device Permission</em>): scegli <strong>Controllable</strong> se vuoi
+        accendere e spegnere luci e prese dalla dashboard, <strong>Read Only</strong> se ti basta vedere gli stati.
+      </li>
+      <li>Premi <strong>OK</strong>: compare un <strong>QR code</strong>.</li>
+      <li>Sul telefono apri <strong>Smart Life → Io</strong> (o <em>Me</em>) → icona di <strong>scansione</strong> in alto a destra, inquadra il QR e conferma.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h3><span class="numero">4</span> Copia l'UID</h3>
+    <ol>
+      <li>Resta in <strong>Devices → Link App Account</strong>: ora nella tabella c'è una riga con il tuo account.</li>
+      <li>Copia il valore della colonna <strong>UID</strong> (lettere e numeri, spesso inizia con <code>eu</code>). Se non vedi la colonna, scorri la tabella verso destra o allarga la finestra.</li>
+      <li>Nella stessa riga guarda anche il <strong>data center</strong> dell'account: ti serve al punto 6.</li>
+    </ol>
+    <p class="nota">Se la tabella è vuota, l'account non è stato collegato: ripeti il punto 3 (e controlla il punto 2).</p>
+  </section>
+
+  <section>
+    <h3><span class="numero">5</span> Copia Access ID e Access Secret</h3>
+    <ol>
+      <li>Apri la scheda <strong>Overview</strong> del progetto.</li>
+      <li>In <strong>Authorization Key</strong> copia <strong>Access ID/Client ID</strong>.</li>
+      <li>Copia anche <strong>Access Secret/Client Secret</strong> (clicca l'occhio per vederlo).</li>
+    </ol>
+    <p class="nota">
+      🔒 L'Access Secret è come una password: scrivilo solo qui nella dashboard, mai in chat o in email.
+      Viene salvato cifrato e non viene mai rimostrato.
+    </p>
+  </section>
+
+  <section>
+    <h3><span class="numero">6</span> Inserisci tutto e prova</h3>
+    <ol>
+      <li><strong>Data center</strong>: quello dell'<em>account Smart Life</em> visto al punto 4 (Western Europe = <em>Europa occidentale</em>, Central Europe = <em>Europa centrale</em>).</li>
+      <li><strong>Access ID</strong>, <strong>Access Secret</strong> e <strong>UID</strong>: quelli copiati sopra.</li>
+      <li>Premi <strong>Salva e prova</strong>: se tutto va bene compare "Collegato! Vedo N dispositivi".</li>
+    </ol>
+    <p class="nota">Non sai quale data center scegliere? Prova "Europa centrale"; se dà errore, prova "Europa occidentale".</p>
+  </section>
+
+  <section>
+    <h3><span class="numero">?</span> Se qualcosa non va</h3>
+    <dl>
+      <dt>"Firma non valida"</dt>
+      <dd>Access ID o Access Secret sbagliati: ricopiali da Overview (attento agli spazi).</dd>
+
+      <dt>"Permesso negato"</dt>
+      <dd>UID sbagliato, oppure l'account Smart Life non è collegato al progetto (punto 3), oppure hai scelto il data center sbagliato (punto 6).</dd>
+
+      <dt>"Il progetto Tuya è in sola lettura" (quando provi ad accendere/spegnere)</dt>
+      <dd>
+        Al collegamento hai scelto <em>Read Only</em>. Su platform.tuya.com, nel progetto, vai in
+        <strong>Devices → Link App Account</strong>, nella riga del tuo account apri la modifica dei permessi
+        (<em>Device Permission</em>) e scegli <strong>Controllable</strong>. Se non trovi l'opzione,
+        togli il collegamento (<em>Unlink</em>) e rifallo scegliendo <em>Controllable</em>.
+      </dd>
+
+      <dt>Le stanze non compaiono</dt>
+      <dd>
+        I dispositivi si vedono tutti in "Altri dispositivi": controlla di averli messi nelle stanze nell'app Smart Life.
+        Dopo una modifica nell'app possono servire fino a 10 minuti.
+      </dd>
+
+      <dt>"Il servizio IoT Core è scaduto"</dt>
+      <dd>
+        Il piano gratuito di Tuya va rinnovato periodicamente (gratis): su platform.tuya.com vai in
+        <strong>Cloud → Cloud Services</strong>, apri <em>IoT Core</em> e rinnova/estendi la prova.
+      </dd>
+
+      <dt>Un dispositivo manca o è "offline"</dt>
+      <dd>Controlla che si veda nell'app Smart Life e in <strong>Devices → All Devices</strong> del progetto. I dati si aggiornano ogni pochi minuti.</dd>
+    </dl>
+  </section>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-flat-button type="button" mat-dialog-close>Ho capito</button>
+</mat-dialog-actions>

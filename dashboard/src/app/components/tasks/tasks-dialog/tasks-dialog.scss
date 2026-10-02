@@ -1,0 +1,93 @@
+.titolo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.filtri {
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.azioni-multiple {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  min-height: 40px;
+  margin-bottom: 4px;
+}
+
+.spazio {
+  flex: 1;
+}
+
+// bottone pieno rosso: "Elimina (N)"
+.pericolo:not(:disabled) {
+  background: var(--mat-sys-error);
+  color: var(--mat-sys-on-error);
+}
+
+// bottone di solo testo rosso: "Elimina tutti i fatti"
+.pericolo-testo:not(:disabled) {
+  color: var(--mat-sys-error);
+}
+
+.lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+// in modalità selezione la riga selezionata si colora leggermente
+.lista.selezione li.selezionato {
+  background: var(--mat-sys-secondary-container);
+  border-radius: 8px;
+}
+
+li {
+  display: flex;
+  align-items: center;
+  gap: 4px 8px;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+
+  &.fatto .nome {
+    text-decoration: line-through;
+    opacity: 0.6;
+  }
+
+  // la classe "overdue" la mette la direttiva appOverdue
+  &.overdue .quando {
+    color: var(--mat-sys-error);
+    font-weight: 500;
+  }
+}
+
+.testo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0; // permette al testo lungo di andare a capo invece di allargare la riga
+  overflow-wrap: anywhere;
+}
+
+.note {
+  white-space: pre-line; // rispetta gli "a capo" scritti nelle note
+  opacity: 0.75;
+}
+
+.quando {
+  opacity: 0.75;
+}
+
+.vuoto {
+  border: 0;
+  padding: 16px 0;
+  opacity: 0.6;
+}
+
+.errore {
+  color: var(--mat-sys-error);
+}

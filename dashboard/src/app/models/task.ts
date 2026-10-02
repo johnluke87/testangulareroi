@@ -32,8 +32,11 @@ export interface NewTask {
 /** Quello che mandiamo per modificarlo (PATCH /tasks/:id): solo i campi che cambiano. */
 export type TaskChanges = Partial<NewTask> & { completed?: boolean };
 
+/** Filtri della modale con tutti i task. */
+export type TaskListFilter = 'open' | 'overdue' | 'done' | 'all';
+
 export const TASK_SLOT_LABELS: Record<TaskSlot, string> = {
-  morning: 'Mattina', 
+  morning: 'Mattina',
   afternoon: 'Pomeriggio',
   evening: 'Sera',
 };
@@ -42,3 +45,21 @@ export const TASK_PRIORITY_LABELS: Record<TaskPriority, string> = {
   2: 'Media',
   3: 'Bassa',
 };
+
+// Gli stessi valori come liste, in ordine: servono ai menu a tendina e ai bottoni del form.
+export const TASK_SLOTS: TaskSlot[] = ['morning', 'afternoon', 'evening'];
+export const TASK_PRIORITIES: TaskPriority[] = [1, 2, 3];
+
+/** Il momento della giornata di un'ora: prima delle 13 mattina, prima delle 18 pomeriggio, poi sera. */
+export function slotForHour(hour: number): TaskSlot {
+  if (hour < 13) {
+    return 'morning';
+  }
+  return hour < 18 ? 'afternoon' : 'evening';
+}
+
+/** Da fare, con una data già passata. todayKey è la data di oggi 'YYYY-MM-DD'. */
+export function isOverdue(task: Task, todayKey: string): boolean {
+  // le date 'YYYY-MM-DD' si confrontano anche come testo
+  return task.completedAt === null && task.dueDate !== null && task.dueDate < todayKey;
+}

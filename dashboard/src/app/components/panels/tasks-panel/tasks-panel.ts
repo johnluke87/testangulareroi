@@ -1,25 +1,28 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatIconModule } from '@angular/material/icon';
 import { Clock } from '../../../core/services/clock';
+import { TaskDialogs } from '../../../core/services/task-dialogs';
 import { Tasks } from '../../../core/services/tasks';
-import { Task, TASK_SLOT_LABELS } from '../../../models/task';
+import { isOverdue, Task, TASK_SLOT_LABELS } from '../../../models/task';
 import { toDateKey } from '../../../shared/dates';
-import { RelativeDayPipe } from '../../../shared/pipes/relative-day-pipe';
+import { DueLabelPipe } from '../../../shared/pipes/due-label-pipe';
+import { PriorityDot } from '../../tasks/priority-dot/priority-dot';
+import { TaskActionsMenu } from '../../tasks/task-actions-menu/task-actions-menu';
 
 @Component({
   selector: 'app-tasks-panel',
-  imports: [MatCheckboxModule, RelativeDayPipe],
+  imports: [MatButtonModule, MatCheckboxModule, MatIconModule, DueLabelPipe, PriorityDot, TaskActionsMenu],
   templateUrl: './tasks-panel.html',
   styleUrl: './tasks-panel.scss',
 })
 export class TasksPanel {
   protected tasks = inject(Tasks);
+  protected dialogs = inject(TaskDialogs);
   protected clock = inject(Clock);
   protected slotLabels = TASK_SLOT_LABELS;
   protected errorMessage = signal<string | null>(null);
-  protected isLoading = computed(() => this.tasks.isLoading());
-  protected tasksList = computed(() => this.tasks.tasks());
-  protected error = computed(() => this.tasks.error());
 
   //computed= una funzione che ritorna un valore calcolato in base a un altro valore. Quando cambia la lista (dopo un reload) o cambia il giorno, Angular ricalcola solo le formule che ne dipendono.
   //signal= una variabile che può cambiare nel tempo. Quando cambia, tutti i componenti che la usano vengono aggiornati automaticamente.
@@ -39,6 +42,9 @@ export class TasksPanel {
       .filter((t) => t.dueDate === null || t.dueDate >= this.todayKey())
       .slice(0, 7),
   );
+
+  //quanti scaduti ci sono: nel pannello non li mostro, ma avviso che esistono (il clic apre la modale sugli scaduti)
+  protected overdueCount = computed(() => this.openTasks().filter((t) => isOverdue(t, this.todayKey())).length);
 
   //ci sono task per oggi?
   protected showingToday = computed(() => this.todayTasks().length > 0);

@@ -18,6 +18,7 @@ li {
 
 mat-checkbox {
     flex: 1;
+    min-width: 0;
 }
 
 .quando {
@@ -26,23 +27,14 @@ mat-checkbox {
     white-space: nowrap;
 }
 
-.priorita {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    flex-shrink: 0;
+.scaduti {
+    color: var(--mat-sys-error);
+}
 
-    &[data-priority='1'] {
-        background: var(--mat-sys-error);
-    }
-
-    &[data-priority='2'] {
-        background: #f0a020;
-    }
-
-    &[data-priority='3'] {
-        background: var(--mat-sys-outline);
-    }
+.azioni {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
 }
 
 .stato {

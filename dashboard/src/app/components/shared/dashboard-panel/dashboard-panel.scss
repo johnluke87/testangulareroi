@@ -1,7 +1,58 @@
 :host {
   display: block;
+  min-width: 0; // dentro la griglia: senza questo un contenuto largo allargherebbe la colonna
 }
 
+// La card occupa tutta l'altezza della riga della griglia (che è fissa, vedi dashboard-page.scss):
+// intestazione ferma in alto, contenuto che SCORRE dentro la card quando è più lungo.
 mat-card {
   height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+// Spaziature più strette di quelle standard di Material (16px): si vede più contenuto
+.mat-mdc-card-header {
+  align-items: center;
+  padding: 10px 12px 6px;
+}
+
+// l'icona del titolo: niente "cerchio" da 40px, solo l'icona
+.mat-mdc-card-avatar {
+  width: 22px;
+  height: 22px;
+  margin-bottom: 0;
+  font-size: 22px;
+  opacity: 0.85;
+}
+
+// il testo dell'intestazione: Material lo stacca di 16px dall'icona
+::ng-deep .mat-mdc-card-header-text {
+  margin: 0 8px;
+}
+
+mat-card-content {
+  flex: 1;
+  min-height: 0; // indispensabile: permette al contenuto di "restringersi" e quindi di scorrere
+  overflow-y: auto;
+  scrollbar-width: thin;
+  padding: 0 12px 10px !important; // Material mette 16px ai lati
+}
+
+// Una colonna sola (telefono, stessa soglia di dashboard-page.scss): la card è alta quanto il suo contenuto,
+// ma al massimo 560px; oltre, il contenuto scorre dentro la card come sul computer.
+// Il blocco diventa una "colonna flex" con un'altezza massima: la card può crescere fino a lì e poi si restringe,
+// e il contenuto (flex: 1 + min-height: 0) scorre.
+@media (max-width: 679px) {
+  :host {
+    display: flex;
+    flex-direction: column;
+    max-height: 560px;
+  }
+
+  mat-card {
+    height: auto;
+    flex: 0 1 auto;
+    min-height: 0;
+  }
 }

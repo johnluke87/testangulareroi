@@ -1,8 +1,35 @@
+// "container": le regole @container più sotto guardano la larghezza di QUESTO componente (cioè della card),
+// non dello schermo. Così funziona sia col meteo largo due colonne sia stretto, o sul telefono.
+:host {
+  display: block;
+  container-type: inline-size;
+}
+
+// [ località + adesso ] [ 7 giorni ] sulla stessa riga
+.riga-alta {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+}
+
+.adesso {
+  flex: 0 0 auto;
+  max-width: 220px;
+  min-width: 0;
+}
+
 h3 {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin: 0 0 8px;
+  gap: 6px;
+  margin: 0 0 4px;
+  font-size: 0.9375rem;
+}
+
+.nome-localita {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 h3 small,
@@ -27,21 +54,20 @@ h3 button {
 .attuale {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin: 0 0 12px;
+  gap: 8px;
+  margin: 0;
 }
 
 .icona-grande {
-  font-size: 2.5rem;
+  font-size: 2rem;
 }
 
 .temp-grande {
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: 300;
 }
 
-//righe che scorrono in orizzontale, con barra sottile
-.giorni,
+// le ore del dettaglio scorrono in orizzontale, con barra sottile
 .ore {
   display: flex;
   gap: 6px;
@@ -50,18 +76,31 @@ h3 button {
   padding-bottom: 4px;
 }
 
+// i 7 giorni si DIVIDONO lo spazio che resta accanto ad "adesso": niente scorrimento
+.giorni {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  gap: 4px;
+}
+
 .giorno {
-  flex: 1 0 4.5rem;
+  flex: 1 1 0; // tutte uguali, si restringono quanto serve
+  min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-  padding: 8px 4px;
+  justify-content: center;
+  gap: 1px;
+  padding: 4px 2px;
   border: 1px solid transparent;
-  border-radius: 12px;
+  border-radius: 10px;
   background: var(--mat-sys-surface-container);
   color: inherit;
   font: inherit;
+  font-size: 0.75rem;
+  line-height: 1.2;
+  white-space: nowrap;
   cursor: pointer;
 
   &:hover {
@@ -80,17 +119,34 @@ h3 button {
 }
 
 .icona {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
 }
 
 .pioggia {
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   opacity: 0.7;
+
+  // 0% di pioggia: non si vede, ma occupa lo stesso spazio (le colonne restano allineate)
+  &.nascosta {
+    visibility: hidden;
+  }
+}
+
+// card stretta (telefono, o meteo in una colonna sola): i giorni vanno sotto a tutta larghezza
+@container (max-width: 520px) {
+  .riga-alta {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .adesso {
+    max-width: none;
+  }
 }
 
 .dettaglio {
-  margin-top: 12px;
-  padding: 12px;
+  margin-top: 10px;
+  padding: 10px;
   border-radius: 12px;
   background: var(--mat-sys-surface-container-low);
 

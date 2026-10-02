@@ -1,26 +1,92 @@
+// Più blocchi per riga: altezza FISSA, tutti uguali (la griglia resta ordinata), il contenuto in più scorre.
+// Un blocco per riga (telefono): altezza secondo il contenuto, con un massimo (vedi dashboard-panel.scss).
+$panel-height: 440px;
+$single-column: 679px; // sotto questa larghezza: una colonna sola
+
 .griglia {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    grid-auto-rows: $panel-height;
+    gap: 10px;
 }
 
-//con una sola colonna (telefono) "span 2" creerebbe una colonna in più, quindi solo da 2 colonne in su
-@media (min-width: 680px) {
+@media (min-width: $single-column + 1) {
+    //con una sola colonna "span 2" creerebbe una colonna in più, quindi solo da 2 colonne in su
     .wide {
         grid-column: span 2;
     }
 }
 
-.intestazione {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-
-    h1 {
-        margin-right: auto;
+@media (max-width: $single-column) {
+    .griglia {
+        grid-template-columns: 1fr; // sempre una colonna: niente due colonne strettissime
+        grid-auto-rows: auto;       // ogni riga alta quanto il suo blocco
     }
 }
 
-.utente {
-    opacity: 0.7;
+// Tre zone: saluto (sinistra) · ricerca (centro, si allarga) · azioni (destra)
+.intestazione {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px 20px;
+    margin-bottom: 10px;
+
+    .oggi {
+        flex: 0 0 auto;
+    }
+
+    .ricerca {
+        flex: 1 1 360px;
+        max-width: 640px;
+        margin: 0 auto; // centrata nello spazio che resta
+    }
+
+    .azioni {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+}
+
+// segnaposto alto come il campo di ricerca: la riga non "salta" quando arriva il componente vero
+.ricerca-segnaposto {
+    height: 48px; // con densità -2 il campo è alto 48px invece di 56
+}
+
+// schermi stretti: saluto e azioni sulla prima riga, la ricerca sotto a tutta larghezza
+@media (max-width: 900px) {
+    .intestazione {
+        .oggi {
+            flex: 1 1 auto;
+        }
+
+        .ricerca {
+            order: 3;
+            flex-basis: 100%;
+            max-width: none;
+        }
+
+        // se il saluto va a capo, ⚙️ ed Esci restano comunque a destra
+        .azioni {
+            margin-left: auto;
+        }
+    }
+}
+
+// telefono: ora · data · ⚙️ · Esci su UNA riga (il saluto lo nasconde today-panel), sotto la ricerca
+@media (max-width: 600px) {
+    .intestazione {
+        flex-wrap: wrap;
+
+        .oggi {
+            flex: 1 1 0;
+            min-width: 0;
+        }
+    }
+
+    .testo-esci {
+        display: none;
+    }
 }

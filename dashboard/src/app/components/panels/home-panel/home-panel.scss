@@ -1,0 +1,127 @@
+.stato {
+  opacity: 0.75;
+
+  a {
+    color: var(--mat-sys-primary);
+  }
+
+  &.errore {
+    opacity: 1;
+    color: var(--mat-sys-error);
+  }
+}
+
+.aggiornamento {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  margin: -8px 0 0;
+
+  small {
+    opacity: 0.6;
+  }
+}
+
+// l'icona 🔄 gira mentre la lettura è in corso
+.gira {
+  animation: gira 1s linear infinite;
+}
+
+@keyframes gira {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// nome della stanza: resta attaccato in alto mentre scorri la card
+.stanza {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  margin: 10px 0 2px;
+  padding: 4px 0;
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  opacity: 0.85;
+  background: var(--mat-sys-surface);
+
+  &:first-of-type {
+    margin-top: 0;
+  }
+}
+
+.lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+mat-slide-toggle small {
+  margin-left: 4px;
+  opacity: 0.7;
+}
+
+li {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  padding: 6px 0;
+
+  & + li {
+    border-top: 1px solid var(--mat-sys-outline-variant);
+  }
+
+  &.offline {
+    opacity: 0.55;
+  }
+}
+
+.punto {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: #3fb950; // verde
+}
+
+.offline .punto {
+  background: var(--mat-sys-outline);
+}
+
+.nome {
+  flex: 1 1 120px;
+  min-width: 0;
+  font-weight: 500;
+}
+
+.valori {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.valore {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  background: var(--mat-sys-surface-container-high);
+  white-space: nowrap;
+
+  small {
+    opacity: 0.65;
+  }
+
+  // porta aperta, movimento, allarme, batteria scarica
+  &.allerta {
+    background: var(--mat-sys-error-container);
+    color: var(--mat-sys-on-error-container);
+  }
+}
+
+.off {
+  opacity: 0.8;
+}

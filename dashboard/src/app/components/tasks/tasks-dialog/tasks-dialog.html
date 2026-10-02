@@ -1,0 +1,117 @@
+<!-- Le tre zone standard di una modale Material: titolo, contenuto (scorre se lungo), bottoni in fondo -->
+<div class="titolo" mat-dialog-title>
+  <span>Tutti i task</span>
+  <button mat-flat-button type="button" (click)="dialogs.openForm()">
+    <mat-icon>add</mat-icon>
+    Nuovo
+  </button>
+</div>
+
+<mat-dialog-content>
+  <!-- [value] = quale bottone è selezionato; (change) = cosa fare quando ne scegli un altro -->
+  <mat-button-toggle-group
+    class="filtri"
+    hideSingleSelectionIndicator
+    [value]="filter()"
+    (change)="filter.set($event.value)"
+    aria-label="Filtro dei task"
+  >
+    <mat-button-toggle value="open">Da fare ({{ open().length }})</mat-button-toggle>
+    <mat-button-toggle value="overdue">Scaduti ({{ overdue().length }})</mat-button-toggle>
+    <mat-button-toggle value="done">Fatti ({{ done().length }})</mat-button-toggle>
+    <mat-button-toggle value="all">Tutti ({{ tasks.tasks().length }})</mat-button-toggle>
+  </mat-button-toggle-group>
+
+  <!-- barra delle azioni su più task -->
+  <div class="azioni-multiple">
+    @if (selecting()) {
+      <mat-checkbox
+        [checked]="allVisibleSelected()"
+        [indeterminate]="selectedVisible().length > 0 && !allVisibleSelected()"
+        (change)="toggleAllVisible()"
+      >
+        Seleziona tutti
+      </mat-checkbox>
+      <span class="spazio"></span>
+      <button
+        mat-flat-button
+        type="button"
+        class="pericolo"
+        [disabled]="selectedVisible().length === 0 || deleting()"
+        (click)="deleteSelected()"
+      >
+        <mat-icon>delete</mat-icon>
+        Elimina ({{ selectedVisible().length }})
+      </button>
+      <button mat-button type="button" (click)="stopSelecting()">Annulla</button>
+    } @else {
+      <button mat-button type="button" [disabled]="visible().length === 0" (click)="startSelecting()">
+        <mat-icon>checklist</mat-icon>
+        Seleziona
+      </button>
+      <span class="spazio"></span>
+      @if (filter() === 'done' && done().length > 0) {
+        <button mat-button type="button" class="pericolo-testo" [disabled]="deleting()" (click)="deleteAllDone()">
+          <mat-icon>delete_sweep</mat-icon>
+          Elimina tutti i fatti
+        </button>
+      }
+    }
+  </div>
+
+  <ul class="lista" [class.selezione]="selecting()">
+    @for (t of visible(); track t.id) {
+      <!-- [appOverdue]: la direttiva aggiunge la classe "overdue" se il task è scaduto -->
+      <li [appOverdue]="t" [class.fatto]="t.completedAt !== null" [class.selezionato]="selectedIds().has(t.id)">
+        <app-priority-dot [priority]="t.priority" />
+
+        @if (selecting()) {
+          <!-- modalità selezione: la casella dice "selezionato", non "fatto" -->
+          <mat-checkbox
+            color="accent"
+            [checked]="selectedIds().has(t.id)"
+            (change)="toggleSelected(t)"
+            [attr.aria-label]="'Seleziona ' + t.title"
+          />
+        } @else {
+          <mat-checkbox
+            [checked]="t.completedAt !== null"
+            (change)="toggle(t)"
+            [attr.aria-label]="t.completedAt ? 'Riapri' : 'Segna come fatto'"
+          />
+        }
+
+        <div class="testo">
+          <span class="nome">{{ t.title }}</span>
+          @if (t.notes) {
+            <small class="note">{{ t.notes }}</small>
+          }
+          <small class="quando">
+            @if (t.completedAt) {
+              <!-- completedAt è in UTC ("...Z"): la DatePipe lo mostra nell'ora italiana -->
+              Chiuso il {{ t.completedAt | date: 'd MMM y, HH:mm' }}
+            } @else {
+              {{ t | dueLabel: clock.now() }}
+            }
+          </small>
+        </div>
+
+        <!-- durante la selezione il menu ⋮ sparisce: un'azione alla volta -->
+        @if (!selecting()) {
+          <app-task-actions-menu [task]="t" />
+        }
+      </li>
+    } @empty {
+      <li class="vuoto">Nessun task qui</li>
+    }
+  </ul>
+
+  @if (errorMessage(); as message) {
+    <p class="errore">{{ message }}</p>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <!-- mat-dialog-close chiude la finestra da solo, senza scrivere codice -->
+  <button mat-button type="button" mat-dialog-close>Chiudi</button>
+</mat-dialog-actions>

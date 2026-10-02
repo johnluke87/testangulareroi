@@ -1,86 +1,86 @@
 <section class="localita">
-  <h3>
-    @if (isCurrent()) {
-      <span title="La tua posizione">📍</span>
-    }
-    <span>{{ place().name }}</span>
-    @if (place().region) {
-      <small>{{ place().region }}</small>
-    }
-    <span class="azioni">
-      <button
-        type="button"
-        (click)="favorites.toggle(place())"
-        [attr.aria-label]="isFavorite() ? 'Togli dai preferiti' : 'Aggiungi ai preferiti'"
-        [title]="isFavorite() ? 'Togli dai preferiti' : 'Aggiungi ai preferiti'"
-      >
-        {{ isFavorite() ? '★' : '☆' }}
-      </button>
-      <button type="button" (click)="forecast.reload()" aria-label="Aggiorna" title="Aggiorna">🔄</button>
-    </span>
-  </h3>
+  <!-- riga in alto: a sinistra località e meteo di adesso, a destra la striscia dei 7 giorni -->
+  <div class="riga-alta">
+    <div class="adesso">
+      <h3>
+        @if (isCurrent()) {
+          <span title="La tua posizione">📍</span>
+        }
+        <span class="nome-localita">{{ place().name }}</span>
+        @if (place().region) {
+          <small>{{ place().region }}</small>
+        }
+        <span class="azioni">
+          <button type="button" (click)="forecast.reload()" aria-label="Aggiorna" title="Aggiorna">🔄</button>
+        </span>
+      </h3>
 
-  @if (forecast.isLoading()) {
-    <p>Caricamento…</p>
-  } @else if (forecast.error()) {
-    <p>Errore</p>
-    <button type="button" (click)="forecast.reload()">Riprova</button>
-  } @else if (forecast.hasValue()) {
-    @let f = forecast.value();
-
-    <p class="attuale">
-      <span class="icona-grande">{{ f.current.weatherCode | weatherIcon }}</span>
-      <span class="temp-grande">{{ f.current.temperature | number: '1.0-0' }}°</span>
-      <span>
-        {{ f.current.weatherCode | weatherLabel }}<br />
-        <small>💨 {{ f.current.windSpeed | number: '1.0-0' }} km/h · adesso</small>
-      </span>
-    </p>
-
-    <!-- striscia dei 7 giorni: il click sceglie quale giorno vedere nel dettaglio -->
-    <div class="giorni" role="tablist" aria-label="Giorni">
-      @for (d of f.daily; track d.date; let i = $index) {
-        <button
-          type="button"
-          role="tab"
-          class="giorno"
-          [class.selezionato]="i === selectedDayIndex()"
-          [attr.aria-selected]="i === selectedDayIndex()"
-          (click)="selectedDayIndex.set(i)"
-        >
-          <span class="nome">{{ d.date | relativeDay: clock.now() }}</span>
-          <span class="icona">{{ d.weatherCode | weatherIcon }}</span>
-          <span><strong>{{ d.max | number: '1.0-0' }}°</strong> {{ d.min | number: '1.0-0' }}°</span>
-          <span class="pioggia">💧 {{ d.precipitationProbability }}%</span>
-        </button>
+      @if (forecast.isLoading()) {
+        <p>Caricamento…</p>
+      } @else if (forecast.error()) {
+        <p>Errore</p>
+        <button type="button" (click)="forecast.reload()">Riprova</button>
+      } @else if (data(); as f) {
+        <p class="attuale">
+          <span class="icona-grande">{{ f.current.weatherCode | weatherIcon }}</span>
+          <span class="temp-grande">{{ f.current.temperature | number: '1.0-0' }}°</span>
+          <span>
+            {{ f.current.weatherCode | weatherLabel }}<br />
+            <small>💨 {{ f.current.windSpeed | number: '1.0-0' }} km/h · adesso</small>
+          </span>
+        </p>
       }
     </div>
 
-    @if (selectedDay(); as day) {
-      <div class="dettaglio" role="tabpanel">
-        <h4>
-          {{ day.date | relativeDay: clock.now() : 'EEEE d MMMM' }}
-          <small>{{ day.weatherCode | weatherLabel }}</small>
-        </h4>
-        <p class="info">
-          <span>🌡️ {{ day.min | number: '1.0-0' }}° / {{ day.max | number: '1.0-0' }}°</span>
-          <span>💧 {{ day.precipitationProbability }}%</span>
-          <span>💨 fino a {{ day.windSpeedMax | number: '1.0-0' }} km/h</span>
-          <span>🌅 {{ day.sunrise | date: 'HH:mm' }}</span>
-          <span>🌇 {{ day.sunset | date: 'HH:mm' }}</span>
-        </p>
-
-        <div class="ore">
-          @for (h of selectedHours(); track h.time) {
-            <div class="ora">
-              <span>{{ h.time | date: 'HH' }}</span>
-              <span class="icona">{{ h.weatherCode | weatherIcon }}</span>
-              <span>{{ h.temperature | number: '1.0-0' }}°</span>
-              <span class="pioggia">{{ h.precipitationProbability }}%</span>
-            </div>
-          }
-        </div>
+    @if (data(); as f) {
+      <!-- striscia dei 7 giorni: il click sceglie quale giorno vedere nel dettaglio -->
+      <div class="giorni" role="tablist" aria-label="Giorni">
+        @for (d of f.daily; track d.date; let i = $index) {
+          <button
+            type="button"
+            role="tab"
+            class="giorno"
+            [class.selezionato]="i === selectedDayIndex()"
+            [attr.aria-selected]="i === selectedDayIndex()"
+            (click)="selectedDayIndex.set(i)"
+          >
+            <span class="nome">{{ d.date | relativeDay: clock.now() }}</span>
+            <span class="icona">{{ d.weatherCode | weatherIcon }}</span>
+            <span><strong>{{ d.max | number: '1.0-0' }}°</strong> {{ d.min | number: '1.0-0' }}°</span>
+            <!-- con 0% la riga resta (invisibile) così le cartine restano tutte alte uguali -->
+            <span class="pioggia" [class.nascosta]="d.precipitationProbability === 0">💧{{ d.precipitationProbability }}%</span>
+          </button>
+        }
       </div>
     }
+  </div>
+
+  @if (data() && selectedDay(); as day) {
+    <div class="dettaglio" role="tabpanel">
+      <h4>
+        {{ day.date | relativeDay: clock.now() : 'EEEE d MMMM' }}
+        <small>{{ day.weatherCode | weatherLabel }}</small>
+      </h4>
+      <p class="info">
+        <span>🌡️ {{ day.min | number: '1.0-0' }}° / {{ day.max | number: '1.0-0' }}°</span>
+        @if (day.precipitationProbability > 0) {
+          <span>💧 {{ day.precipitationProbability }}%</span>
+        }
+        <span>💨 fino a {{ day.windSpeedMax | number: '1.0-0' }} km/h</span>
+        <span>🌅 {{ day.sunrise | date: 'HH:mm' }}</span>
+        <span>🌇 {{ day.sunset | date: 'HH:mm' }}</span>
+      </p>
+
+      <div class="ore">
+        @for (h of selectedHours(); track h.time) {
+          <div class="ora">
+            <span>{{ h.time | date: 'HH' }}</span>
+            <span class="icona">{{ h.weatherCode | weatherIcon }}</span>
+            <span>{{ h.temperature | number: '1.0-0' }}°</span>
+            <span class="pioggia" [class.nascosta]="h.precipitationProbability === 0">💧{{ h.precipitationProbability }}%</span>
+          </div>
+        }
+      </div>
+    </div>
   }
 </section>

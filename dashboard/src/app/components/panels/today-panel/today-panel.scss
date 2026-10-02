@@ -1,0 +1,39 @@
+:host {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+}
+
+.saluto {
+  margin: 0;
+  font-size: 1.25rem; // un po' più piccolo di prima (24px -> 20px)
+  font-weight: 400;
+}
+
+.ora {
+  font-size: 1.125rem;
+  font-variant-numeric: tabular-nums; // le cifre hanno tutte la stessa larghezza: l'ora non "balla"
+}
+
+// telefono: niente saluto, ora e data su una riga sola (accanto a ⚙️ ed Esci)
+@media (max-width: 600px) {
+  :host {
+    flex-wrap: nowrap;
+    gap: 10px;
+  }
+
+  .saluto {
+    display: none;
+  }
+}
+
+.data {
+  display: inline-block; // ::first-letter funziona solo su elementi "a blocco"
+  opacity: 0.7;
+
+  // "giovedì 1 ottobre" -> "Giovedì 1 ottobre" (capitalize renderebbe maiuscolo anche il mese)
+  &::first-letter {
+    text-transform: uppercase;
+  }
+}

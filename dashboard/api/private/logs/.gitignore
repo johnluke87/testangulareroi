@@ -1,3 +1,0 @@
-# Qui PHP scrive gli errori: i log restano fuori da git, ma la cartella deve esistere.
-*
-!.gitignore

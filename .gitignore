@@ -3,3 +3,8 @@
 
 # configurazione locale di Claude Code (avvio dei server di sviluppo)
 /.claude/
+
+# Progetti con il loro repository
+/dashboard/
+/gatto/
+/radar/
